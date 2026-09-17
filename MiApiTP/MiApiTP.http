@@ -1,0 +1,6 @@
+@MiApiTP_HostAddress = http://localhost:5009
+
+GET {{MiApiTP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
