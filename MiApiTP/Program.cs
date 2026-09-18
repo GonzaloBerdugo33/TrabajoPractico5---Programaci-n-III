@@ -1,5 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using MiApiTP.Data;
+using MiApiTP.Repositorios;
+using MiApiTP.Servicios;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,18 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<MiApiTPContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repositorios
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<ICategoriaProductoRepository, CategoriaProductoRepository>();
+builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+
+// Servicios
+builder.Services.AddScoped<ProductoService>();
+builder.Services.AddScoped<CategoriaProductoService>();
+builder.Services.AddScoped<ProveedorService>();
+builder.Services.AddScoped<ClienteService>();
 
 var app = builder.Build();
 

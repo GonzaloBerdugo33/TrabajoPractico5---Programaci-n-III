@@ -7,6 +7,7 @@ namespace MiApiTP.Repositorios
     public interface IProveedorRepository
     {
         Task<List<Proveedor>> ObtenerTodosAsync();
+        Task<List<Proveedor>> ObtenerPaginadoAsync(int pagina, int tamanoPagina);
         Task<Proveedor> ObtenerPorIdAsync(int id);
         Task AgregarAsync(Proveedor proveedor);
         Task ActualizarAsync(Proveedor proveedor);

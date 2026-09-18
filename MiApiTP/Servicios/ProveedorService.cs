@@ -12,9 +12,9 @@ namespace MiApiTP.Servicios
             _repositorio = repositorio;
         }
 
-        public async Task<List<Proveedor>> ListarProveedores() 
+        public async Task<List<Proveedor>> ObtenerPaginado(int pagina, int tamanoPagina)
         {
-            return await _repositorio.ObtenerTodosAsync();
+            return await _repositorio.ObtenerPaginadoAsync(pagina, tamanoPagina);
         }
 
         public async Task<Proveedor> ObtenerPorId(int id) 
