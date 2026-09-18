@@ -10,6 +10,8 @@ namespace MiApiTP.Data
         }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<CategoriaProducto> Categorias { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<IngresoProducto> Ingresos { get; set; }
         public DbSet<SalidaProducto> Salidas { get; set; }

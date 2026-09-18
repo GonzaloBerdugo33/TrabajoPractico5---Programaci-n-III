@@ -1,0 +1,15 @@
+﻿using MiApiTP.Data;
+using MiApiTP.Modelos;
+using Microsoft.EntityFrameworkCore;
+
+namespace MiApiTP.Repositorios
+{
+    public interface IClienteRepository
+    {
+        Task<List<Cliente>> ObtenerTodosAsync();
+        Task<Cliente> ObtenerPorIdAsync(int id);
+        Task AgregarAsync(Cliente cliente);
+        Task ActualizarAsync(Cliente cliente);
+        Task EliminarAsync(int id);
+    }
+}
