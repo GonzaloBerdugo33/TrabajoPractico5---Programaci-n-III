@@ -18,6 +18,14 @@ namespace MiApiTP.Repositorios
             return await _contex.Productos.ToListAsync();
         }
 
+        public async Task<List<Producto>> ObtenerPaginadoAsync(int pagina, int tamanoPagina)
+        {
+            return await _contex.Productos
+            .Skip((pagina - 1) * tamanoPagina)
+            .Take(tamanoPagina)
+            .ToListAsync();
+        }
+
         public async Task<Producto> ObtenerPorIdAsync(int id) 
         {
             return await _contex.Productos.FindAsync(id);
