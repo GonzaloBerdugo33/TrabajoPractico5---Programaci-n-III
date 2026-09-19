@@ -9,6 +9,6 @@
         public string Telefono { get; set; }
         public string Email { get; set; }
         // Usamos listas para representar la relación de uno a muchos
-        public List<SalidaProducto> Salidas { get; set; }
+        public List<SalidaProducto> Salidas { get; set; } = new List<SalidaProducto>();
     }
 }

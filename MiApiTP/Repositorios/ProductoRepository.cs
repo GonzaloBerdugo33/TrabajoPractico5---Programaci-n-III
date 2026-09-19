@@ -6,21 +6,21 @@ namespace MiApiTP.Repositorios
 {
     public class ProductoRepository : IProductoRepository
     {
-        private readonly MiApiTPContext _contex;
+        private readonly MiApiTPContext _context;
 
         public ProductoRepository(MiApiTPContext context)
         {
-            _contex = context;
+            _context = context;
         }
 
         public async Task<List<Producto>> ObtenerTodosAsync() 
         {
-            return await _contex.Productos.ToListAsync();
+            return await _context.Productos.ToListAsync();
         }
 
         public async Task<List<Producto>> ObtenerPaginadoAsync(int pagina, int tamanoPagina)
         {
-            return await _contex.Productos
+            return await _context.Productos
             .Skip((pagina - 1) * tamanoPagina)
             .Take(tamanoPagina)
             .ToListAsync();
@@ -28,27 +28,38 @@ namespace MiApiTP.Repositorios
 
         public async Task<Producto> ObtenerPorIdAsync(int id) 
         {
-            return await _contex.Productos.FindAsync(id);
+            return await _context.Productos.FindAsync(id);
         }
 
         public async Task AgregarAsync(Producto producto)
         {
-            _contex.Productos.Add(producto);
-            await _contex.SaveChangesAsync();
+            _context.Productos.Add(producto);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ActualizarAsync(Producto producto) 
         {
-            _contex.Productos.Update(producto);
-            await _contex.SaveChangesAsync();
+            _context.Productos.Update(producto);
+            await _context.SaveChangesAsync();
         }
 
         public async Task EliminarAsync(int id) 
         {
-            var producto = await _contex.Productos.FindAsync(id);
-            if (producto != null) {
-                _contex.Productos.Remove(producto);
-                await _contex.SaveChangesAsync();
+           bool tieneSalidas = await _context.Salidas.AnyAsync(s => s.ProductoId == id);
+           bool tieneIngresos = await _context.Ingresos.AnyAsync(i => i.ProductoId == id);
+
+            if (tieneSalidas || tieneIngresos) 
+            {
+                throw new Exception("No se puede eliminar producto porque cuenta con Salidas o Ingresos");
+            }
+            else
+            {
+                var producto = await _context.Productos.FindAsync(id);
+                if (producto != null)
+                {
+                    _context.Productos.Remove(producto);
+                    await _context.SaveChangesAsync();
+                }
             }
         }
     }
