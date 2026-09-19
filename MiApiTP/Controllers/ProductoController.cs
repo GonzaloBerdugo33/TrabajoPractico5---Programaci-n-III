@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiApiTP.Modelos;
 using MiApiTP.Servicios;
+using MiApiTP.DTOs;
 using System.Linq.Expressions;
 
 namespace MiApiTP.Controllers
@@ -32,16 +33,35 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(Producto producto)
+        public async Task<IActionResult> Crear(CrearProductoDTO dto)
         {
+            var producto = new Producto
+            {
+                Nombre = dto.Nombre,
+                Precio = dto.Precio,
+                Stock = dto.Stock,
+                ImagenUrl = dto.ImagenUrl,
+                CategoriaId = dto.CategoriaId,
+                ProveedorId = dto.ProveedorId,
+            };
             await _service.CrearProducto(producto);
             return Ok(producto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, Producto producto)
+        public async Task<IActionResult> Actualizar(int id, CrearProductoDTO dto)
         {
-            if (id != producto.Id) return BadRequest();
+            var producto = new Producto
+            {
+                Id = id,
+                Nombre = dto.Nombre,
+                Precio = dto.Precio,
+                Stock = dto.Stock,
+                ImagenUrl = dto.ImagenUrl,
+                CategoriaId = dto.CategoriaId,
+                ProveedorId = dto.ProveedorId
+            };
+            
             await _service.ActualizarProducto(producto);
             return NoContent();
         }
