@@ -1,6 +1,4 @@
-﻿
-
-namespace MiApiTP.DTOs
+﻿namespace MiApiTP.DTOs
 {
     public class CrearProductoDTO
     {

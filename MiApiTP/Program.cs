@@ -21,12 +21,14 @@ builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
 builder.Services.AddScoped<ICategoriaProductoRepository, CategoriaProductoRepository>();
 builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 // Servicios
 builder.Services.AddScoped<ProductoService>();
 builder.Services.AddScoped<CategoriaProductoService>();
 builder.Services.AddScoped<ProveedorService>();
 builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<UsuarioService>();
 
 var app = builder.Build();
 
