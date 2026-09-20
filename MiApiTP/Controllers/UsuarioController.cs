@@ -20,7 +20,7 @@ namespace MiApiTP.Controllers
         public async Task<IActionResult> ObtenerTodos()
         {
             var usuarios = await _service.ListarUsuarios();
-            var dtos = usuarios.Select(u => new UsuarioDTO
+            var dtos = usuarios.Select(u => new UsuarioDTOs
             {
                 Id = u.Id,
                 Nombre = u.Nombre,
@@ -35,7 +35,7 @@ namespace MiApiTP.Controllers
         {
             var usuario = await _service.ObtenerPorId(id);
             if (usuario == null) return NotFound();
-            var dto = new UsuarioDTO
+            var dto = new UsuarioDTOs
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
@@ -46,7 +46,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(CrearUsuarioDTO dto)
+        public async Task<IActionResult> Crear(CrearUsuarioDTOs dto)
         {
             var usuario = new Usuario
             {
@@ -57,7 +57,7 @@ namespace MiApiTP.Controllers
             };
             await _service.CrearUsuario(usuario);
 
-            var resultado = new UsuarioDTO
+            var resultado = new UsuarioDTOs
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
@@ -68,7 +68,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, CrearUsuarioDTO dto)
+        public async Task<IActionResult> Actualizar(int id, CrearUsuarioDTOs dto)
         {
             var usuario = new Usuario
             {

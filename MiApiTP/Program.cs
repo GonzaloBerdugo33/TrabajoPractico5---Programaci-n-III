@@ -22,6 +22,8 @@ builder.Services.AddScoped<ICategoriaProductoRepository, CategoriaProductoReposi
 builder.Services.AddScoped<IProveedorRepository, ProveedorRepository>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IIngresoProductoRepository, IngresoRepository>();
+builder.Services.AddScoped<ISalidaProductoRepository, SalidaRepository>();
 
 // Servicios
 builder.Services.AddScoped<ProductoService>();
@@ -29,6 +31,8 @@ builder.Services.AddScoped<CategoriaProductoService>();
 builder.Services.AddScoped<ProveedorService>();
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<IngresoService>();
+builder.Services.AddScoped<SalidaService>();
 
 var app = builder.Build();
 
