@@ -1,10 +1,12 @@
 ﻿using MiApiTP.Modelos;
 using MiApiTP.Servicios;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MiApiTP.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class SalidaController : ControllerBase
     {

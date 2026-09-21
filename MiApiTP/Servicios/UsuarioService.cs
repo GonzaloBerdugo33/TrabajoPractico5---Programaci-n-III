@@ -22,6 +22,25 @@ namespace MiApiTP.Servicios
             return await _repositorio.ObtenerPorIdAsync(id);
         }
 
+        public async Task<Usuario> ValidarCredenciales(string email, string password)
+        {
+            var usuario = await _repositorio.ObtenerPorEmailAsync(email);
+            if (usuario != null)
+            {
+                if (BCrypt.Net.BCrypt.Verify(password, usuario.PasswordHash))
+                {
+                    return usuario;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
         public async Task CrearUsuario(Usuario usuario)
         {
             await _repositorio.AgregarAsync(usuario);

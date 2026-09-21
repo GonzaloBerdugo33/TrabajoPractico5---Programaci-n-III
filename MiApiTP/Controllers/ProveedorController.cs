@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MiApiTP.Modelos;
+﻿using MiApiTP.Modelos;
 using MiApiTP.Servicios;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 
 namespace MiApiTP.Controllers
@@ -32,6 +33,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Crear(Proveedor proveedor) 
         {
             await _service.CrearProveedor(proveedor);
@@ -39,6 +41,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Actualizar(int id, Proveedor proveedor) 
         {
             if (id != proveedor.Id) return BadRequest();
@@ -47,6 +50,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Eliminar(int id)
         {
             try

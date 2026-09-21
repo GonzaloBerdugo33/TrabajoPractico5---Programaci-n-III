@@ -23,6 +23,11 @@ namespace MiApiTP.Repositorios
             return await _context.Usuarios.FindAsync(id);
         }
 
+        public async Task<Usuario> ObtenerPorEmailAsync(string email) 
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
         public async Task AgregarAsync(Usuario usuario) 
         {
             _context.Usuarios.Add(usuario);

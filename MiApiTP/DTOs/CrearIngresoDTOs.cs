@@ -1,6 +1,6 @@
 ﻿namespace MiApiTP.DTOs
 {
-    public class CrearIngresoDTO
+    public class CrearIngresoDTOs
     {
         public int ProductoId { get; set; }
         public int ProveedorId { get; set; }

@@ -1,11 +1,13 @@
-﻿using MiApiTP.Modelos;
+﻿using MiApiTP.DTOs;
+using MiApiTP.Modelos;
 using MiApiTP.Servicios;
-using MiApiTP.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MiApiTP.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class IngresoController : ControllerBase
     {
@@ -32,7 +34,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(CrearIngresoDTO dto)
+        public async Task<IActionResult> Crear(CrearIngresoDTOs dto)
         {
             var ingreso = new IngresoProducto
             {

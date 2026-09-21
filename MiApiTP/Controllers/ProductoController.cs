@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MiApiTP.DTOs;
 using MiApiTP.Modelos;
 using MiApiTP.Servicios;
-using MiApiTP.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 
 namespace MiApiTP.Controllers
@@ -33,6 +34,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Crear(CrearProductoDTOs dto)
         {
             var producto = new Producto
@@ -49,6 +51,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Actualizar(int id, CrearProductoDTOs dto)
         {
             var producto = new Producto
@@ -67,6 +70,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> Eliminar(int id)
         {
             try
