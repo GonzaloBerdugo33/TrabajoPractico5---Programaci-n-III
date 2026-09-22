@@ -103,6 +103,8 @@ app.UseAuthentication();
 
 app.UseCors("PermitirTodo");
 
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();

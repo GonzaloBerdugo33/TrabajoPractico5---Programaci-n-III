@@ -50,6 +50,21 @@ namespace MiApiTP.Controllers
             return Ok(producto);
         }
 
+        [HttpPost("{id}/imagen")]
+        [Authorize]
+        public async Task<IActionResult> SubirImagen(int id, IFormFile archivo)
+        {
+            try
+            {
+                var rutaImagen = await _service.SubirImagen(id, archivo);
+                return Ok(new { imagenUrl = rutaImagen });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Actualizar(int id, CrearProductoDTOs dto)
