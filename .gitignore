@@ -4,3 +4,5 @@ obj/
 .vs/
 **/wwwroot/uploads/*
 !**/wwwroot/uploads/.gitkeep
+appsettings.Development.json
+MiApiTP/appsettings.Development.json
