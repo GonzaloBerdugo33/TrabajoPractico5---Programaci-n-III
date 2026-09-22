@@ -6,9 +6,13 @@ Proyecto desarrollado para el Trabajo Práctico 5 de Programación III.
 
 ### 🚀 API publicada
 
+La API se encuentra desplegada en Render:
+
 [https://miapitp-api.onrender.com](https://miapitp-api.onrender.com)
 
-### 📚 Swagger
+### 📚 Swagger - Documentación y pruebas
+
+Para consultar y probar los endpoints de la API:
 
 [https://miapitp-api.onrender.com/swagger](https://miapitp-api.onrender.com/swagger)
 
