@@ -1,5 +1,6 @@
 ﻿using MiApiTP.Modelos;
 using MiApiTP.Servicios;
+using MiApiTP.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,8 +34,17 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(SalidaProducto salida)
+        public async Task<IActionResult> Crear(CrearSalidaDTO dto)
         {
+            var salida = new SalidaProducto
+            {
+                ProductoId = dto.ProductoId,
+                ClienteId = dto.ClienteId,
+                UsuarioId = dto.UsuarioId,
+                Cantidad = dto.Cantidad,
+                Fecha = DateTime.SpecifyKind(dto.Fecha, DateTimeKind.Utc)
+            };
+
             try
             {
                 await _service.RegistrarSalida(salida);
