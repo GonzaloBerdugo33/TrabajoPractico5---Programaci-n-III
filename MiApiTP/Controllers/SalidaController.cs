@@ -48,7 +48,16 @@ namespace MiApiTP.Controllers
             try
             {
                 await _service.RegistrarSalida(salida);
-                return Ok(salida);
+                var resultado = new SalidaDTO
+                {
+                    Id = salida.Id,
+                    ProductoId = salida.ProductoId,
+                    ClienteId = salida.ClienteId,
+                    UsuarioId = salida.UsuarioId,
+                    Cantidad = salida.Cantidad,
+                    Fecha = salida.Fecha
+                };
+                return Ok(resultado);
             }
             catch (Exception ex)
             {
