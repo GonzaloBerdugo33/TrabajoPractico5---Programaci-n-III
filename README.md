@@ -43,13 +43,13 @@ La base de datos se encuentra publicada en Render y está conectada a la API.
 
 La documentación de las pruebas realizadas con Postman se encuentra en:
 
-[Documentación de pruebas de Postman](./Documentacion/Documentacion_Pruebas_Postman.pdf)
+[Documentación de pruebas de Postman](./Documentacion/Documentacion_Pruebas_API_TP5.pdf)
 
 ## 📐 Diagrama Entidad-Relación
 
 El modelo de datos se encuentra documentado mediante el siguiente diagrama:
 
-[Diagrama Entidad-Relación](./Documentacion/Diagrama_Entidad_Relacion.pdf)
+[Diagrama Entidad-Relación](./Documentacion/Diagrama_ER_TP5.pdf)
 
 ## 🔗 Repositorio
 
