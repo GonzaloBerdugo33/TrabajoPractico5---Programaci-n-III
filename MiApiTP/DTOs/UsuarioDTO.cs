@@ -1,6 +1,6 @@
 ﻿namespace MiApiTP.DTOs
 {
-    public class UsuarioDTOs
+    public class UsuarioDTO
     {
         public int Id { get; set; }
         public string Nombre { get; set; }

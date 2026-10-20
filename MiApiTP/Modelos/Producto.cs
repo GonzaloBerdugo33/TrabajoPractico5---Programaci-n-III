@@ -16,8 +16,8 @@
         // Propiedad de Navegacion
         public Proveedor Proveedor { get; set; }
         // Usamos listas para representar relaciones de uno a muchos
-        public List<IngresoProducto> Ingresos { get; set; } = new List<IngresoProducto>();
-        public List<SalidaProducto> Salidas { get; set; } = new List<SalidaProducto>();
+        public List<IngresoDetalle> ingresoDetalles { get; set; } = new List<IngresoDetalle>();
+        public List<SalidaDetalle> salidaDetalles { get; set; } = new List<SalidaDetalle>();
 
     }
 }

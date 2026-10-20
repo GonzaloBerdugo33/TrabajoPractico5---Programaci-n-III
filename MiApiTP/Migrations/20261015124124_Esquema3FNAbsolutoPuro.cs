@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiApiTP.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class Esquema3FNAbsolutoPuro : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace MiApiTP.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cliente",
+                name: "Clientes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -39,7 +39,7 @@ namespace MiApiTP.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cliente", x => x.Id);
+                    table.PrimaryKey("PK_Clientes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,7 +59,7 @@ namespace MiApiTP.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Usuario",
+                name: "Usuarios",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -71,7 +71,7 @@ namespace MiApiTP.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuario", x => x.Id);
+                    table.PrimaryKey("PK_Usuarios", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,21 +110,13 @@ namespace MiApiTP.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ProductoId = table.Column<int>(type: "integer", nullable: false),
                     ProveedorId = table.Column<int>(type: "integer", nullable: false),
                     UsuarioId = table.Column<int>(type: "integer", nullable: false),
-                    Cantidad = table.Column<int>(type: "integer", nullable: false),
                     Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ingresos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Ingresos_Productos_ProductoId",
-                        column: x => x.ProductoId,
-                        principalTable: "Productos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Ingresos_Proveedores_ProveedorId",
                         column: x => x.ProveedorId,
@@ -132,9 +124,9 @@ namespace MiApiTP.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Ingresos_Usuario_UsuarioId",
+                        name: "FK_Ingresos_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
-                        principalTable: "Usuario",
+                        principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -145,39 +137,109 @@ namespace MiApiTP.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ProductoId = table.Column<int>(type: "integer", nullable: false),
                     ClienteId = table.Column<int>(type: "integer", nullable: false),
                     UsuarioId = table.Column<int>(type: "integer", nullable: false),
-                    Cantidad = table.Column<int>(type: "integer", nullable: false),
                     Fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Salidas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Salidas_Cliente_ClienteId",
+                        name: "FK_Salidas_Clientes_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Cliente",
+                        principalTable: "Clientes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Salidas_Productos_ProductoId",
+                        name: "FK_Salidas_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IngresoDetalles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ProductoId = table.Column<int>(type: "integer", nullable: false),
+                    IngresoProductoId = table.Column<int>(type: "integer", nullable: false),
+                    Cantidad = table.Column<int>(type: "integer", nullable: false),
+                    PrecioUnitario = table.Column<decimal>(type: "numeric", nullable: false),
+                    ProductoId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IngresoDetalles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IngresoDetalles_Ingresos_IngresoProductoId",
+                        column: x => x.IngresoProductoId,
+                        principalTable: "Ingresos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IngresoDetalles_Productos_ProductoId",
                         column: x => x.ProductoId,
                         principalTable: "Productos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Salidas_Usuario_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuario",
+                        name: "FK_IngresoDetalles_Productos_ProductoId1",
+                        column: x => x.ProductoId1,
+                        principalTable: "Productos",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SalidaDetalles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ProductoId = table.Column<int>(type: "integer", nullable: false),
+                    SalidaProductoId = table.Column<int>(type: "integer", nullable: false),
+                    Cantidad = table.Column<int>(type: "integer", nullable: false),
+                    PrecioUnitario = table.Column<decimal>(type: "numeric", nullable: false),
+                    ProductoId1 = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalidaDetalles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SalidaDetalles_Productos_ProductoId",
+                        column: x => x.ProductoId,
+                        principalTable: "Productos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SalidaDetalles_Productos_ProductoId1",
+                        column: x => x.ProductoId1,
+                        principalTable: "Productos",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SalidaDetalles_Salidas_SalidaProductoId",
+                        column: x => x.SalidaProductoId,
+                        principalTable: "Salidas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingresos_ProductoId",
-                table: "Ingresos",
+                name: "IX_IngresoDetalles_IngresoProductoId",
+                table: "IngresoDetalles",
+                column: "IngresoProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IngresoDetalles_ProductoId",
+                table: "IngresoDetalles",
                 column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IngresoDetalles_ProductoId1",
+                table: "IngresoDetalles",
+                column: "ProductoId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ingresos_ProveedorId",
@@ -200,14 +262,24 @@ namespace MiApiTP.Migrations
                 column: "ProveedorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SalidaDetalles_ProductoId",
+                table: "SalidaDetalles",
+                column: "ProductoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalidaDetalles_ProductoId1",
+                table: "SalidaDetalles",
+                column: "ProductoId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SalidaDetalles_SalidaProductoId",
+                table: "SalidaDetalles",
+                column: "SalidaProductoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Salidas_ClienteId",
                 table: "Salidas",
                 column: "ClienteId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Salidas_ProductoId",
-                table: "Salidas",
-                column: "ProductoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Salidas_UsuarioId",
@@ -219,25 +291,31 @@ namespace MiApiTP.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "IngresoDetalles");
+
+            migrationBuilder.DropTable(
+                name: "SalidaDetalles");
+
+            migrationBuilder.DropTable(
                 name: "Ingresos");
-
-            migrationBuilder.DropTable(
-                name: "Salidas");
-
-            migrationBuilder.DropTable(
-                name: "Cliente");
 
             migrationBuilder.DropTable(
                 name: "Productos");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "Salidas");
 
             migrationBuilder.DropTable(
                 name: "Categorias");
 
             migrationBuilder.DropTable(
                 name: "Proveedores");
+
+            migrationBuilder.DropTable(
+                name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Usuarios");
         }
     }
 }

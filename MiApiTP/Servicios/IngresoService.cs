@@ -25,11 +25,23 @@ namespace MiApiTP.Servicios
         }
         public async Task RegistrarIngreso(IngresoProducto ingreso) 
         {
-            var producto = await _productoRepository.ObtenerPorIdAsync(ingreso.ProductoId);
-            producto.Stock += ingreso.Cantidad;
-            await _productoRepository.ActualizarAsync(producto);
+            if (ingreso.DetallesIngresos == null || !ingreso.DetallesIngresos.Any())
+            {
+                throw new Exception("El ingreso debe contener al menos un detalle de producto.");
+            }
+
+            foreach (var detalles in ingreso.DetallesIngresos)
+            {
+                var producto = await _productoRepository.ObtenerPorIdAsync(detalles.ProductoId);
+
+                if(producto == null) 
+                {
+                    throw new Exception($"El producto con ID {detalles.ProductoId} no existe en el sistema.");
+                }
+                producto.Stock += detalles.Cantidad;
+                await _productoRepository.ActualizarAsync(producto);
+            }
             await _ingresoRepository.AgregarAsync(ingreso);
-            
         }
     }
 }

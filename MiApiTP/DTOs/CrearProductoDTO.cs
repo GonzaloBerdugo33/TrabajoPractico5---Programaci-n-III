@@ -1,6 +1,6 @@
 ﻿namespace MiApiTP.DTOs
 {
-    public class CrearProductoDTOs
+    public class CrearProductoDTO
     {
         public string Nombre {  get; set; }
         public decimal Precio { get; set; }

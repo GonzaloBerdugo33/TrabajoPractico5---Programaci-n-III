@@ -3,11 +3,12 @@ using MiApiTP.Modelos;
 using MiApiTP.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     public class IngresoController : ControllerBase
     {
@@ -34,34 +35,42 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(CrearIngresoDTOs dto)
+        public async Task<IActionResult> Crear(CrearIngresoDTO dto)
         {
-            var ingreso = new IngresoProducto
+            try 
             {
-                ProductoId = dto.ProductoId,
-                ProveedorId = dto.ProveedorId,
-                UsuarioId = dto.UsuarioId,
-                Cantidad = dto.Cantidad,
-                Fecha = DateTime.SpecifyKind(dto.Fecha, DateTimeKind.Utc)
-            };
+                var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                                  ?? User.FindFirst("id")?.Value;
 
-            try
-            {
-                await _service.RegistrarIngreso(ingreso);
-                var resultado = new IngresoDTOs
+                if (string.IsNullOrEmpty(usuarioIdClaim))
                 {
-                    Id = ingreso.Id,
-                    ProductoId = ingreso.ProductoId,
-                    ProveedorId = ingreso.ProveedorId,
-                    UsuarioId = ingreso.UsuarioId,
-                    Cantidad = ingreso.Cantidad,
-                    Fecha = ingreso.Fecha
+                    return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado desde el token." });
+                }
+
+                int usuarioIdLogueado = int.Parse(usuarioIdClaim);
+                var ingreso = new IngresoProducto
+                {
+                    ProveedorId = dto.ProveedorId,
+                    UsuarioId = usuarioIdLogueado,
+                    Fecha = DateTime.UtcNow,
+
+
+                    DetallesIngresos = dto.Detalles.Select(detalleDto => new IngresoDetalle
+                    {
+                        ProductoId = detalleDto.ProductoId,
+                        Cantidad = detalleDto.Cantidad
+
+                    }).ToList()
                 };
-                return Ok(resultado);
+
+
+                await _service.RegistrarIngreso(ingreso);
+
+                return Ok(new { mensaje = "Salida registrada con éxito" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { error = ex.Message });
             }
         }
     }

@@ -3,11 +3,12 @@ using MiApiTP.Servicios;
 using MiApiTP.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     public class SalidaController : ControllerBase
     {
@@ -36,32 +37,44 @@ namespace MiApiTP.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(CrearSalidaDTO dto)
         {
-            var salida = new SalidaProducto
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                                  ?? User.FindFirst("id")?.Value;
+
+            if (string.IsNullOrEmpty(usuarioIdClaim))
             {
-                ProductoId = dto.ProductoId,
-                ClienteId = dto.ClienteId,
-                UsuarioId = dto.UsuarioId,
-                Cantidad = dto.Cantidad,
-                Fecha = DateTime.SpecifyKind(dto.Fecha, DateTimeKind.Utc)
-            };
+                return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado desde el token." });
+            }
+
+            int usuarioIdLogueado = int.Parse(usuarioIdClaim);
 
             try
             {
-                await _service.RegistrarSalida(salida);
-                var resultado = new SalidaDTO
+                var salida = new SalidaProducto
                 {
-                    Id = salida.Id,
-                    ProductoId = salida.ProductoId,
-                    ClienteId = salida.ClienteId,
-                    UsuarioId = salida.UsuarioId,
-                    Cantidad = salida.Cantidad,
-                    Fecha = salida.Fecha
+                    ClienteId = dto.ClienteId,
+                    UsuarioId = usuarioIdLogueado,
+                    Fecha = DateTime.UtcNow,
+                    DetallesProductos = dto.Detalles.Select(detalleDto => new SalidaDetalle
+                    {
+                        ProductoId = detalleDto.ProductoId,
+                        Cantidad = detalleDto.Cantidad
+                    }).ToList()
                 };
-                return Ok(resultado);
+
+                await _service.RegistrarSalida(salida);
+
+                return Ok(new { mensaje = "Salida registrada con éxito" });
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                // 🔍 Esto nos va a mostrar el error exacto y en qué línea ocurrió
+                var innerMessage = ex.InnerException != null ? ex.InnerException.Message : "Sin inner exception";
+                return BadRequest(new
+                {
+                    error = ex.Message,
+                    inner = innerMessage,
+                    stackTrace = ex.StackTrace
+                });
             }
         }
     }

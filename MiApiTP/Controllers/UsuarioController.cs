@@ -24,7 +24,7 @@ namespace MiApiTP.Controllers
         public async Task<IActionResult> ObtenerTodos()
         {
             var usuarios = await _service.ListarUsuarios();
-            var dtos = usuarios.Select(u => new UsuarioDTOs
+            var dtos = usuarios.Select(u => new UsuarioDTO
             {
                 Id = u.Id,
                 Nombre = u.Nombre,
@@ -40,7 +40,7 @@ namespace MiApiTP.Controllers
         {
             var usuario = await _service.ObtenerPorId(id);
             if (usuario == null) return NotFound();
-            var dto = new UsuarioDTOs
+            var dto = new UsuarioDTO
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
@@ -51,7 +51,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginDTOs dto) 
+        public async Task<IActionResult> Login(LoginDTO dto) 
         {
             var usuario = await _service.ValidarCredenciales(dto.Email, dto.Password);
             if(usuario == null) 
@@ -64,7 +64,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear(CrearUsuarioDTOs dto)
+        public async Task<IActionResult> Crear(CrearUsuarioDTO dto)
         {
             var usuario = new Usuario
             {
@@ -75,7 +75,7 @@ namespace MiApiTP.Controllers
             };
             await _service.CrearUsuario(usuario);
 
-            var resultado = new UsuarioDTOs
+            var resultado = new UsuarioDTO
             {
                 Id = usuario.Id,
                 Nombre = usuario.Nombre,
@@ -87,7 +87,7 @@ namespace MiApiTP.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Actualizar(int id, CrearUsuarioDTOs dto)
+        public async Task<IActionResult> Actualizar(int id, CrearUsuarioDTO dto)
         {
             var usuario = new Usuario
             {

@@ -72,7 +72,7 @@ namespace MiApiTP.Migrations
                     b.ToTable("Clientes");
                 });
 
-            modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
+            modelBuilder.Entity("MiApiTP.Modelos.IngresoDetalle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,11 +83,39 @@ namespace MiApiTP.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("IngresoProductoId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("integer");
+
+                    b.Property<int?>("ProductoId1")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngresoProductoId");
+
+                    b.HasIndex("ProductoId");
+
+                    b.HasIndex("ProductoId1");
+
+                    b.ToTable("IngresoDetalles");
+                });
+
+            modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("ProveedorId")
                         .HasColumnType("integer");
@@ -96,8 +124,6 @@ namespace MiApiTP.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductoId");
 
                     b.HasIndex("ProveedorId");
 
@@ -172,7 +198,7 @@ namespace MiApiTP.Migrations
                     b.ToTable("Proveedores");
                 });
 
-            modelBuilder.Entity("MiApiTP.Modelos.SalidaProducto", b =>
+            modelBuilder.Entity("MiApiTP.Modelos.SalidaDetalle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,14 +209,42 @@ namespace MiApiTP.Migrations
                     b.Property<int>("Cantidad")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("PrecioUnitario")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProductoId1")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SalidaProductoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.HasIndex("ProductoId1");
+
+                    b.HasIndex("SalidaProductoId");
+
+                    b.ToTable("SalidaDetalles");
+                });
+
+            modelBuilder.Entity("MiApiTP.Modelos.SalidaProducto", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<int>("ClienteId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer");
@@ -198,8 +252,6 @@ namespace MiApiTP.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
-
-                    b.HasIndex("ProductoId");
 
                     b.HasIndex("UsuarioId");
 
@@ -235,14 +287,31 @@ namespace MiApiTP.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
+            modelBuilder.Entity("MiApiTP.Modelos.IngresoDetalle", b =>
                 {
-                    b.HasOne("MiApiTP.Modelos.Producto", "Producto")
-                        .WithMany("Ingresos")
+                    b.HasOne("MiApiTP.Modelos.IngresoProducto", "ingresoProducto")
+                        .WithMany("DetallesIngresos")
+                        .HasForeignKey("IngresoProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiApiTP.Modelos.Producto", "producto")
+                        .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MiApiTP.Modelos.Producto", null)
+                        .WithMany("ingresoDetalles")
+                        .HasForeignKey("ProductoId1");
+
+                    b.Navigation("ingresoProducto");
+
+                    b.Navigation("producto");
+                });
+
+            modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
+                {
                     b.HasOne("MiApiTP.Modelos.Proveedor", "Proveedor")
                         .WithMany("Ingresos")
                         .HasForeignKey("ProveedorId")
@@ -254,8 +323,6 @@ namespace MiApiTP.Migrations
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Producto");
 
                     b.Navigation("Proveedor");
 
@@ -281,17 +348,34 @@ namespace MiApiTP.Migrations
                     b.Navigation("Proveedor");
                 });
 
+            modelBuilder.Entity("MiApiTP.Modelos.SalidaDetalle", b =>
+                {
+                    b.HasOne("MiApiTP.Modelos.Producto", "producto")
+                        .WithMany()
+                        .HasForeignKey("ProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiApiTP.Modelos.Producto", null)
+                        .WithMany("salidaDetalles")
+                        .HasForeignKey("ProductoId1");
+
+                    b.HasOne("MiApiTP.Modelos.SalidaProducto", "salidaProducto")
+                        .WithMany("DetallesProductos")
+                        .HasForeignKey("SalidaProductoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("producto");
+
+                    b.Navigation("salidaProducto");
+                });
+
             modelBuilder.Entity("MiApiTP.Modelos.SalidaProducto", b =>
                 {
                     b.HasOne("MiApiTP.Modelos.Cliente", "Cliente")
                         .WithMany("Salidas")
                         .HasForeignKey("ClienteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MiApiTP.Modelos.Producto", "Producto")
-                        .WithMany("Salidas")
-                        .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -302,8 +386,6 @@ namespace MiApiTP.Migrations
                         .IsRequired();
 
                     b.Navigation("Cliente");
-
-                    b.Navigation("Producto");
 
                     b.Navigation("Usuario");
                 });
@@ -318,11 +400,16 @@ namespace MiApiTP.Migrations
                     b.Navigation("Salidas");
                 });
 
+            modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
+                {
+                    b.Navigation("DetallesIngresos");
+                });
+
             modelBuilder.Entity("MiApiTP.Modelos.Producto", b =>
                 {
-                    b.Navigation("Ingresos");
+                    b.Navigation("ingresoDetalles");
 
-                    b.Navigation("Salidas");
+                    b.Navigation("salidaDetalles");
                 });
 
             modelBuilder.Entity("MiApiTP.Modelos.Proveedor", b =>
@@ -330,6 +417,11 @@ namespace MiApiTP.Migrations
                     b.Navigation("Ingresos");
 
                     b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("MiApiTP.Modelos.SalidaProducto", b =>
+                {
+                    b.Navigation("DetallesProductos");
                 });
 
             modelBuilder.Entity("MiApiTP.Modelos.Usuario", b =>

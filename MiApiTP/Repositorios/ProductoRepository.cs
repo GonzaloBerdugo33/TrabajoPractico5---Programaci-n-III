@@ -45,8 +45,8 @@ namespace MiApiTP.Repositorios
 
         public async Task EliminarAsync(int id) 
         {
-           bool tieneSalidas = await _context.Salidas.AnyAsync(s => s.ProductoId == id);
-           bool tieneIngresos = await _context.Ingresos.AnyAsync(i => i.ProductoId == id);
+           bool tieneSalidas = await _context.SalidaDetalles.AnyAsync(s => s.ProductoId == id);
+           bool tieneIngresos = await _context.IngresoDetalles.AnyAsync(i => i.ProductoId == id);
 
             if (tieneSalidas || tieneIngresos) 
             {

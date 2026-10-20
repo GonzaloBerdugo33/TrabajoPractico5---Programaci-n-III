@@ -1,6 +1,6 @@
 ﻿namespace MiApiTP.DTOs
 {
-    public class LoginDTOs
+    public class LoginDTO
     {
         public string Email { get; set; }
         public string Password { get; set; }

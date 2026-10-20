@@ -1,4 +1,6 @@
-﻿namespace MiApiTP.Modelos
+﻿using System.Text.Json.Serialization;
+
+namespace MiApiTP.Modelos
 {
     public class CategoriaProducto
     {
@@ -6,6 +8,7 @@
         public string Nombre { get; set; }
 
         // Propiedad de Navegacion
+        [JsonIgnore]
         public List<Producto> Productos { get; set; } = new List<Producto>();
     }
 }

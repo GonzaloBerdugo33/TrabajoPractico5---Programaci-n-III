@@ -1,4 +1,6 @@
-﻿namespace MiApiTP.Modelos
+﻿using System.Text.Json.Serialization;
+
+namespace MiApiTP.Modelos
 {
     public class Cliente
     {
@@ -9,6 +11,7 @@
         public string Telefono { get; set; }
         public string Email { get; set; }
         // Usamos listas para representar la relación de uno a muchos
+        [JsonIgnore]
         public List<SalidaProducto> Salidas { get; set; } = new List<SalidaProducto>();
     }
 }

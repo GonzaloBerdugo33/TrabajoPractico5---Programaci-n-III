@@ -18,6 +18,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerPaginado(int pagina = 1, int tamanoPagina = 10)
         {
             var clientes = await _service.ObtenerPaginado(pagina, tamanoPagina);
@@ -25,6 +26,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             var cliente = await _service.ObtenerPorId(id);

@@ -35,7 +35,7 @@ namespace MiApiTP.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Crear(CrearProductoDTOs dto)
+        public async Task<IActionResult> Crear(CrearProductoDTO dto)
         {
             var producto = new Producto
             {
@@ -67,7 +67,7 @@ namespace MiApiTP.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Actualizar(int id, CrearProductoDTOs dto)
+        public async Task<IActionResult> Actualizar(int id, CrearProductoDTO dto)
         {
             var producto = new Producto
             {

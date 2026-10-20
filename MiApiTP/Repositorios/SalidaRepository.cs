@@ -15,12 +15,18 @@ namespace MiApiTP.Repositorios
 
         public async Task<List<SalidaProducto>> ObtenerTodosAsync()
         {
-            return await _context.Salidas.ToListAsync();
+            return await _context.Salidas
+                .Include(s => s.DetallesProductos) 
+                    .ThenInclude(d => d.producto)  
+                .ToListAsync();
         }
 
         public async Task<SalidaProducto> ObtenerPorIdAsync(int id)
         {
-            return await _context.Salidas.FindAsync(id);
+            return await _context.Salidas
+                .Include(s => s.DetallesProductos)
+                    .ThenInclude(d => d.producto)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task AgregarAsync(SalidaProducto salida)
