@@ -39,7 +39,6 @@ namespace MiApiTP.Servicios
                     throw new Exception($"El producto con ID {detalles.ProductoId} no existe en el sistema.");
                 }
                 producto.Stock += detalles.Cantidad;
-                await _productoRepository.ActualizarAsync(producto);
             }
             await _ingresoRepository.AgregarAsync(ingreso);
         }

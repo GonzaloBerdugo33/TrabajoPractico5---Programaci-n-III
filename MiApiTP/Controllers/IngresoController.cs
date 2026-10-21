@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     public class IngresoController : ControllerBase
     {
@@ -66,7 +66,7 @@ namespace MiApiTP.Controllers
 
                 await _service.RegistrarIngreso(ingreso);
 
-                return Ok(new { mensaje = "Salida registrada con éxito" });
+                return Ok(new { mensaje = "Ingreso registrado con éxito" });
             }
             catch (Exception ex)
             {
