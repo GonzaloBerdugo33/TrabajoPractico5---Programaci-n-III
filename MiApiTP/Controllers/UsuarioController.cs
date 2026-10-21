@@ -63,16 +63,23 @@ namespace MiApiTP.Controllers
             return Ok(new { token = token });
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Crear(CrearUsuarioDTO dto)
         {
+            var usuarioExistente = await _service.ObtenerPorEmail(dto.Email);
+            if(usuarioExistente != null)
+            {
+                return BadRequest("El email ya se encuentra registrado.");
+            }
+            
             var usuario = new Usuario
             {
                 Nombre = dto.Nombre,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Rol = dto.Rol
+                Rol = "Cliente"
             };
+            
             await _service.CrearUsuario(usuario);
 
             var resultado = new UsuarioDTO

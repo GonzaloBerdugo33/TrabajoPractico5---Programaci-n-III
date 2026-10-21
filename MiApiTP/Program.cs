@@ -1,4 +1,5 @@
 using MiApiTP.Data;
+using MiApiTP.Modelos;
 using MiApiTP.Repositorios;
 using MiApiTP.Servicios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -123,6 +124,34 @@ using (var scope = app.Services.CreateScope())
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "Ocurrió un error al aplicar las migraciones en la base de datos.");
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<MiApiTPContext>();
+
+        if (!context.Usuarios.Any(u => u.Rol == "Administrador"))
+        {
+            var adminUser = new Usuario
+            {
+                Nombre = "Administrador",
+                Email = "admin@pos.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123*"),
+                Rol = "Administrador"
+            };
+
+            context.Usuarios.Add(adminUser);
+            context.SaveChanges();
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Error al sembrar el usuario administrador.");
     }
 }
 

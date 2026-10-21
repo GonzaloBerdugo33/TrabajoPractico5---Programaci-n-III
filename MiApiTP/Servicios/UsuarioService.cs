@@ -22,6 +22,11 @@ namespace MiApiTP.Servicios
             return await _repositorio.ObtenerPorIdAsync(id);
         }
 
+        public async Task<Usuario?> ObtenerPorEmail(string email)
+        {
+            return await _repositorio.ObtenerPorEmailAsync(email);
+        }
+
         public async Task<Usuario> ValidarCredenciales(string email, string password)
         {
             var usuario = await _repositorio.ObtenerPorEmailAsync(email);
