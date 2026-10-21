@@ -22,7 +22,18 @@ namespace MiApiTP.Controllers
         public async Task<IActionResult> ObtenerPaginado(int pagina = 1, int tamanoPagina = 10)
         {
             var productos = await _service.ObtenerPaginado(pagina, tamanoPagina);
-            return Ok(productos);
+            var productosDto = productos.Select(p => new ProductoDTO
+            {
+                Id = p.Id,
+                Nombre = p.Nombre,
+                Precio = p.Precio,
+                Stock = p.Stock,
+                ImagenUrl = p.ImagenUrl,
+                CategoriaNombre = p.Categoria?.Nombre ?? "Sin Categoría",
+                ProveedorNombre = p.Proveedor?.RazonSocial ?? "Sin Proveedor"
+            }).ToList();
+
+            return Ok(productosDto);
         }
 
         [HttpGet("{id}")]
@@ -30,7 +41,19 @@ namespace MiApiTP.Controllers
         {
             var producto = await _service.ObtenerPorId(id);
             if (producto == null) return NotFound();
-            return Ok(producto);
+
+            var productoDto = new ProductoDTO
+            {
+                Id = producto.Id,
+                Nombre = producto.Nombre,
+                Precio = producto.Precio,
+                Stock = producto.Stock,
+                ImagenUrl = producto.ImagenUrl,
+                CategoriaNombre = producto.Categoria?.Nombre ?? "Sin Categoría",
+                ProveedorNombre = producto.Proveedor?.RazonSocial ?? "Sin Proveedor"
+            };
+
+            return Ok(productoDto);
         }
 
         [HttpPost]

@@ -1,4 +1,6 @@
 <Solution>
-  <Project Path="../MiApiTP.Web/MiApiTP.Web.csproj" Id="112ccaa6-9679-4341-bcc4-8afbaeda9e65" />
+  <Project Path="../MiApiTP.Web/MiApiTP.Web.csproj" Id="112ccaa6-9679-4341-bcc4-8afbaeda9e65">
+    <BuildDependency Project="MiApiTP.csproj" />
+  </Project>
   <Project Path="MiApiTP.csproj" />
 </Solution>
