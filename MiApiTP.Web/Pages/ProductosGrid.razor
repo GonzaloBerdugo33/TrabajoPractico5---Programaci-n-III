@@ -1,0 +1,115 @@
+﻿@page "/productos-grid"
+@inject HttpClient Http
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [AllowAnonymous]
+
+<h3 class="mb-3">Catálogo de Productos (QuickGrid)</h3>
+
+<!-- Barra de herramientas: Búsqueda y configuración de página -->
+<div class="row g-2 mb-3 align-items-center">
+    <div class="col-md-6">
+        <input type="search"
+               class="form-control"
+               placeholder="Buscar producto por nombre o categoría..."
+               @bind="filtroBusqueda"
+               @bind:event="oninput" />
+    </div>
+    <div class="col-md-3">
+        <div class="input-group">
+            <label class="input-group-text">Por pág.</label>
+            <select class="form-select" @bind="pagination.ItemsPerPage">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+@if (productosQueryable == null)
+{
+    <p><em>Cargando catálogo desde la API...</em></p>
+}
+else
+{
+    <div class="table-responsive shadow-sm border rounded">
+        <Microsoft.AspNetCore.Components.QuickGrid.QuickGrid Items="@ProductosFiltrados" Pagination="@pagination" class="table table-hover align-middle mb-0">
+
+            <!-- Columna de Imagen (Directo dentro del TemplateColumn, sin etiquetas intermedias) -->
+            <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Foto" Context="prod">
+                @if (!string.IsNullOrEmpty(prod.ImagenUrl))
+                {
+                    <img src="@prod.ImagenUrl"
+                         alt="@prod.Nombre"
+                         style="width: 45px; height: 45px; object-fit: contain;"
+                         class="rounded border bg-white p-1" />
+                }
+                else
+                {
+                    <span class="badge bg-light text-muted border">S/I</span>
+                }
+            </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>
+
+            <!-- Columnas Tipadas de QuickGrid con nombre completo para evitar choques -->
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Id)" Title="ID" Sortable="true" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Nombre)" Title="Producto" Sortable="true" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.CategoriaNombre)" Title="Categoría" Sortable="true" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.ProveedorNombre)" Title="Proveedor" Sortable="true" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Precio)" Title="Precio ($)" Format="C2" Sortable="true" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Right" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Stock)" Title="Stock" Sortable="true" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Right" />
+
+            <!-- Columna de Acciones -->
+            <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Acciones" Context="prod" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Center">
+                <AuthorizeView Roles="Admin">
+                    <a href="/subir-imagen" class="btn btn-sm btn-outline-primary">+ Img</a>
+                </AuthorizeView>
+            </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>
+        </Microsoft.AspNetCore.Components.QuickGrid.QuickGrid>
+    </div>
+
+    <!-- Navegador de Páginas nativo de QuickGrid -->
+    <div class="mt-3 d-flex justify-content-center">
+        <Microsoft.AspNetCore.Components.QuickGrid.Paginator State="@pagination" />
+    </div>
+}
+
+@code {
+    private Microsoft.AspNetCore.Components.QuickGrid.PaginationState pagination = new() { ItemsPerPage = 5 };
+    private string filtroBusqueda = string.Empty;
+    private IQueryable<ProductoDTO>? productosQueryable;
+
+    private IQueryable<ProductoDTO> ProductosFiltrados
+    {
+        get
+        {
+            if (productosQueryable == null)
+                return Enumerable.Empty<ProductoDTO>().AsQueryable();
+
+            if (string.IsNullOrWhiteSpace(filtroBusqueda))
+                return productosQueryable;
+
+            var termino = filtroBusqueda.Trim().ToLower();
+            return productosQueryable.Where(p =>
+                p.Nombre.ToLower().Contains(termino) ||
+                (p.CategoriaNombre != null && p.CategoriaNombre.ToLower().Contains(termino)) ||
+                (p.ProveedorNombre != null && p.ProveedorNombre.ToLower().Contains(termino)));
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var lista = await Http.GetFromJsonAsync<List<ProductoDTO>>("api/Producto");
+            if (lista != null)
+            {
+                productosQueryable = lista.AsQueryable();
+            }
+        }
+        catch (Exception)
+        {
+            // Manejo de errores de red
+        }
+    }
+}

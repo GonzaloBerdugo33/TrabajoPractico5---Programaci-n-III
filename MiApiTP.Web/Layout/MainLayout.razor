@@ -1,16 +1,125 @@
-﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+﻿@using MiApiTP.Web.Services
+@using MiApiTP.Web.Servicios.Interfaces
+@inherits LayoutComponentBase
+@inject IAuthService AuthService
+@inject NavigationManager Nav
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<!-- Proveedores Globales Requeridos por MudBlazor -->
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_miTemaPersonalizado" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudLayout>
+<!-- Barra Superior (AppBar) -->
+<MudAppBar Elevation="2" Color="Color.Primary" Dense="false">
+<MudIconButton Icon="@Icons.Material.Filled.Menu"
+Color="Color.Inherit"
+Edge="Edge.Start"
+OnClick="@ToggleDrawer" />
+<MudText Typo="Typo.h6" Class="ml-3">Tienda .NET 10</MudText>
+<MudSpacer />
+<!-- Alternador de Tema Claro / Oscuro -->
+<MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode :
+Icons.Material.Filled.DarkMode)"
+Color="Color.Inherit"
+OnClick="@(() => _isDarkMode = !_isDarkMode)"
+Title="@(_isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro")" />
+<!-- Estado de Sesión del Usuario -->
+<AuthorizeView>
+<Authorized>
+<MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Secondary"
+Class="mr-2">
+@context.User.Identity?.Name
+</MudChip>
+<MudIconButton Icon="@Icons.Material.Filled.Logout"
+Color="Color.Inherit"
+OnClick="CerrarSesion"
+Title="Cerrar Sesión" />
+</Authorized>
+<NotAuthorized>
+<MudButton Variant="Variant.Text"
+Color="Color.Inherit"
+StartIcon="@Icons.Material.Filled.Login"
+Href="/login">
+Ingresar
+</MudButton>
+</NotAuthorized>
+</AuthorizeView>
+</MudAppBar>
+<!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
+<MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="3"
+Variant="DrawerVariant.Responsive">
+<MudDrawerHeader>
+<MudText Typo="Typo.subtitle1" Class="font-weight-bold" Color="Color.Primary">
+Panel Principal
+</MudText>
+</MudDrawerHeader>
+<MudNavMenu>
+<MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+Inicio
+</MudNavLink>
+<MudNavGroup Title="Catálogo" Icon="@Icons.Material.Filled.Storefront" Expanded="true">
+<MudNavLink Href="/productos" Icon="@Icons.Material.Filled.ShoppingBag">
+Productos (Tarjetas)
+</MudNavLink>
+<MudNavLink Href="/productos-grid" Icon="@Icons.Material.Filled.TableRows">
+Productos (QuickGrid)
+</MudNavLink>
+</MudNavGroup>
+<!-- Menú exclusivo para Administradores -->
+<AuthorizeView Roles="Admin">
+<MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings"
+Expanded="true">
+<MudNavLink Href="/usuarios-grid" Icon="@Icons.Material.Filled.People">
+Gestión Usuarios
+</MudNavLink>
+<MudNavLink Href="/subir-imagen" Icon="@Icons.Material.Filled.CloudUpload">
+Subir Imágenes
+</MudNavLink>
+<MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">
+Reportes PDF
+</MudNavLink>
+</MudNavGroup>
+</AuthorizeView>
+<MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
+Acerca de
+</MudNavLink>
+</MudNavMenu>
+</MudDrawer>
+<!-- Contenedor Principal de la Página -->
+<MudMainContent Class="pa-6">
+@Body
+</MudMainContent>
+</MudLayout>
+@code {
+private bool _drawerOpen = true;
+private bool _isDarkMode = false;
+private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+private async Task CerrarSesion()
+    {
+        await AuthService.LogoutAsync();
+        Nav.NavigateTo("/login");
+    }
+    // Configuración de Paleta de Colores de la Marca
+    private readonly MudTheme _miTemaPersonalizado = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#0284c7",
+            Secondary = "#0f172a",
+            AppbarBackground = "#0f172a",
+            Background = "#f8fafc",
+            DrawerBackground = "#ffffff",
+            Surface = "#ffffff"
+        },
+        PaletteDark = new PaletteDark
+        {
+            Primary = "#38bdf8",
+            Secondary = "#94a3b8",
+            AppbarBackground = "#090d16",
+            Background = "#0f172a",
+            DrawerBackground = "#1e293b",
+            Surface = "#1e293b"
+        }
+    };
+}
