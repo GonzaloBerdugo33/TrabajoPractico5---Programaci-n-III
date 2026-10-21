@@ -17,7 +17,7 @@ namespace MiApiTP.Repositorios
         {
             return await _context.Salidas
                 .Include(s => s.DetallesProductos) 
-                    .ThenInclude(d => d.producto)  
+                    .ThenInclude(d => d.Producto)  
                 .ToListAsync();
         }
 
@@ -25,7 +25,7 @@ namespace MiApiTP.Repositorios
         {
             return await _context.Salidas
                 .Include(s => s.DetallesProductos)
-                    .ThenInclude(d => d.producto)
+                    .ThenInclude(d => d.Producto)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 

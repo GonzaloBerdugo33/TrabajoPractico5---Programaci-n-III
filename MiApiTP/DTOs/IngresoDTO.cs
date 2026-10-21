@@ -6,6 +6,6 @@
         public int ProveedorId { get; set; }
         public int UsuarioId { get; set; }
         public DateTime Fecha { get; set; }
-        public List<IngresoDetalleDTO> DetallesProductos { get; set; }
+        public List<IngresoDetalleDTO> DetallesProductos { get; set; } = new();
     }
 }
