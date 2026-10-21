@@ -144,7 +144,6 @@ namespace MiApiTP.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ImagenUrl")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Nombre")
@@ -289,13 +288,13 @@ namespace MiApiTP.Migrations
 
             modelBuilder.Entity("MiApiTP.Modelos.IngresoDetalle", b =>
                 {
-                    b.HasOne("MiApiTP.Modelos.IngresoProducto", "ingresoProducto")
+                    b.HasOne("MiApiTP.Modelos.IngresoProducto", "IngresoProducto")
                         .WithMany("DetallesIngresos")
                         .HasForeignKey("IngresoProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MiApiTP.Modelos.Producto", "producto")
+                    b.HasOne("MiApiTP.Modelos.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -305,9 +304,9 @@ namespace MiApiTP.Migrations
                         .WithMany("ingresoDetalles")
                         .HasForeignKey("ProductoId1");
 
-                    b.Navigation("ingresoProducto");
+                    b.Navigation("IngresoProducto");
 
-                    b.Navigation("producto");
+                    b.Navigation("Producto");
                 });
 
             modelBuilder.Entity("MiApiTP.Modelos.IngresoProducto", b =>
@@ -350,7 +349,7 @@ namespace MiApiTP.Migrations
 
             modelBuilder.Entity("MiApiTP.Modelos.SalidaDetalle", b =>
                 {
-                    b.HasOne("MiApiTP.Modelos.Producto", "producto")
+                    b.HasOne("MiApiTP.Modelos.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -360,15 +359,15 @@ namespace MiApiTP.Migrations
                         .WithMany("salidaDetalles")
                         .HasForeignKey("ProductoId1");
 
-                    b.HasOne("MiApiTP.Modelos.SalidaProducto", "salidaProducto")
+                    b.HasOne("MiApiTP.Modelos.SalidaProducto", "SalidaProducto")
                         .WithMany("DetallesProductos")
                         .HasForeignKey("SalidaProductoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("producto");
+                    b.Navigation("Producto");
 
-                    b.Navigation("salidaProducto");
+                    b.Navigation("SalidaProducto");
                 });
 
             modelBuilder.Entity("MiApiTP.Modelos.SalidaProducto", b =>

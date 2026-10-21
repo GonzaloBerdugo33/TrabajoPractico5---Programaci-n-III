@@ -7,12 +7,12 @@ namespace MiApiTP.Modelos
         public int Id {  get; set; }
         // FK
         public int ProductoId { get; set; }
-        public Producto producto { get; set; }
+        public Producto? Producto { get; set; }
         //FK
         public int SalidaProductoId {  get; set; }
         
         [JsonIgnore]
-        public SalidaProducto salidaProducto { get; set; }
+        public SalidaProducto? SalidaProducto { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
     }

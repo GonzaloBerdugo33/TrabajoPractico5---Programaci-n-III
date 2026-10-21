@@ -22,33 +22,27 @@ namespace MiApiTP.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<SalidaProducto>()
-                .Ignore("ProductoId")
-                .Ignore("Producto");
-
+            // Relación SalidaProducto -> SalidaDetalles
             modelBuilder.Entity<SalidaProducto>()
                 .HasMany(s => s.DetallesProductos)
-                .WithOne(d => d.salidaProducto)
+                .WithOne(d => d.SalidaProducto)
                 .HasForeignKey(d => d.SalidaProductoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SalidaDetalle>()
-                .HasOne(d => d.producto)
+                .HasOne(d => d.Producto)
                 .WithMany()
                 .HasForeignKey(d => d.ProductoId);
 
-            modelBuilder.Entity<IngresoProducto>()
-                .Ignore("ProductoId")
-                .Ignore("Producto");
-
+            // Relación IngresoProducto -> IngresoDetalles
             modelBuilder.Entity<IngresoProducto>()
                 .HasMany(i => i.DetallesIngresos)
-                .WithOne(d => d.ingresoProducto)
+                .WithOne(d => d.IngresoProducto)
                 .HasForeignKey(d => d.IngresoProductoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<IngresoDetalle>()
-                .HasOne(d => d.producto)
+                .HasOne(d => d.Producto)
                 .WithMany()
                 .HasForeignKey(d => d.ProductoId);
         }

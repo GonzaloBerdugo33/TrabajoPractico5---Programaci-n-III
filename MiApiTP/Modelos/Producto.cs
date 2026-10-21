@@ -3,21 +3,21 @@
     public class Producto
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = string.Empty;
         public decimal Precio { get; set; }
         public int Stock { get; set; }
-        public string ImagenUrl { get; set; }
+        public string? ImagenUrl { get; set; }
         // FK
         public int CategoriaId { get; set; }
         // Propiedad de Navegacion
-        public CategoriaProducto Categoria { get; set; }
+        public CategoriaProducto? Categoria { get; set; }
         // FK
         public int ProveedorId { get; set; }
         // Propiedad de Navegacion
-        public Proveedor Proveedor { get; set; }
+        public Proveedor? Proveedor { get; set; }
         // Usamos listas para representar relaciones de uno a muchos
-        public List<IngresoDetalle> ingresoDetalles { get; set; } = new List<IngresoDetalle>();
-        public List<SalidaDetalle> salidaDetalles { get; set; } = new List<SalidaDetalle>();
+        public List<IngresoDetalle> ingresoDetalles { get; set; } = new();
+        public List<SalidaDetalle> salidaDetalles { get; set; } = new();
 
     }
 }

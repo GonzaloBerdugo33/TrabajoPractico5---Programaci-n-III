@@ -9,9 +9,9 @@
         public int UsuarioId { get; set; }
         public DateTime Fecha { get; set; }
         // Propiedades de navegación muchos a uno
-        public Proveedor Proveedor { get; set; }
-        public Usuario Usuario { get; set; }
-        public List<IngresoDetalle> DetallesIngresos { get; set; }
+        public Proveedor? Proveedor { get; set; }
+        public Usuario? Usuario { get; set; }
+        public List<IngresoDetalle> DetallesIngresos { get; set; } = new();
 
     }
 }

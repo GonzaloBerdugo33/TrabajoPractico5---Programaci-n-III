@@ -3,13 +3,13 @@
     public class Usuario
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Email { get; set; }
-        public string PasswordHash { get; set; }
-        public string Rol { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
+        public string Rol { get; set; } = string.Empty;
         // Usamos listas para representar la relación de uno a muchos
-        public List<IngresoProducto> Ingresos { get; set; }
-        public List<SalidaProducto> Productos { get; set; }
+        public List<IngresoProducto> Ingresos { get; set; } = new();
+        public List<SalidaProducto> Productos { get; set; } = new();
 
     }
 }
