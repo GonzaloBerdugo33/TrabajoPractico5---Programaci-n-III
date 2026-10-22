@@ -1,0 +1,183 @@
+﻿@page "/Ingreso/Nuevo"
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Registrar Nuevo Ingreso de Mercadería</MudText>
+
+<MudGrid>
+    <!-- Selección de Proveedor -->
+    <MudItem xs="12" md="6">
+        <MudSelect T="int" Label="Proveedor" @bind-Value="ingresoDto.ProveedorId" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @if (proveedores == null)
+            {
+                <MudSelectItem Value="0" Disabled="true">Cargando proveedores...</MudSelectItem>
+            }
+            else
+            {
+                @foreach (var prov in proveedores)
+                {
+                    <MudSelectItem Value="@prov.Id">@prov.RazonSocial</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<MudDivider Class="my-4" />
+
+<MudText Typo="Typo.h6" Class="mb-2">Agregar Productos al Ingreso</MudText>
+
+<!-- Formulario temporal para agregar detalles -->
+<MudGrid AlignItems="Center">
+    <MudItem xs="12" md="6">
+        <MudSelect T="int" Label="Seleccionar Producto" @bind-Value="productoSeleccionadoId" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @if (productos == null)
+            {
+                <MudSelectItem Value="0" Disabled="true">Cargando productos...</MudSelectItem>
+            }
+            else
+            {
+                @foreach (var prod in productos)
+                {
+                    <MudSelectItem Value="@prod.Id">@prod.Nombre</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudNumericField T="int" Label="Cantidad" @bind-Value="cantidadSeleccionada" Min="1" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" md="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="AgregarDetalle">Agregar</MudButton>
+    </MudItem>
+</MudGrid>
+
+<!-- Tabla de Detalles Agregados -->
+<MudTable Items="ingresoDto.Detalles" Class="mt-4" Hover="true" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <TH>Producto ID</TH>
+        <TH>Cantidad</TH>
+        <TH>Acciones</TH>
+    </HeaderContent>
+    <RowTemplate>
+        <TD DataLabel="Producto ID">@context.ProductoId</TD>
+        <TD DataLabel="Cantidad">@context.Cantidad</TD>
+        <TD DataLabel="Acciones">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => RemoverDetalle(context)" />
+        </TD>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No hay productos agregados a este ingreso todavía.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+<!-- Botón Guardar Final -->
+<div class="d-flex justify-end mt-6">
+    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" OnClick="GuardarIngreso">
+        Registrar Ingreso en el Sistema
+    </MudButton>
+</div>
+
+@code {
+    private CrearIngresoDTO ingresoDto = new();
+    private List<ProveedorSelectDTO>? proveedores;
+    private List<ProductoSelectDTO>? productos;
+
+    private int productoSeleccionadoId;
+    private int cantidadSeleccionada = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatosSelects();
+    }
+
+    private async Task CargarDatosSelects()
+    {
+        try
+        {
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor/Todos");
+            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto/Todos");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar catálogos: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void AgregarDetalle()
+    {
+        if (productoSeleccionadoId == 0)
+        {
+            Snackbar.Add("Debe seleccionar un producto válido.", Severity.Warning);
+            return;
+        }
+
+        if (cantidadSeleccionada <= 0)
+        {
+            Snackbar.Add("La cantidad debe ser mayor a cero.", Severity.Warning);
+            return;
+        }
+
+        var existente = ingresoDto.Detalles.FirstOrDefault(d => d.ProductoId == productoSeleccionadoId);
+        if (existente != null)
+        {
+            existente.Cantidad += cantidadSeleccionada;
+        }
+        else
+        {
+            ingresoDto.Detalles.Add(new CrearIngresoDetalleDTO
+            {
+                ProductoId = productoSeleccionadoId,
+                Cantidad = cantidadSeleccionada
+            });
+        }
+
+        // Resetear selección temporal
+        productoSeleccionadoId = 0;
+        cantidadSeleccionada = 1;
+    }
+
+    private void RemoverDetalle(CrearIngresoDetalleDTO detalle)
+    {
+        ingresoDto.Detalles.Remove(detalle);
+    }
+
+    private async Task GuardarIngreso()
+    {
+        if (ingresoDto.ProveedorId == 0)
+        {
+            Snackbar.Add("Debe seleccionar un proveedor.", Severity.Error);
+            return;
+        }
+
+        if (!ingresoDto.Detalles.Any())
+        {
+            Snackbar.Add("El ingreso debe contener al menos un producto.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Ingreso", ingresoDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("¡Ingreso registrado con éxito y stock actualizado!", Severity.Success);
+                Navigation.NavigateTo("/Ingreso");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Snackbar.Add($"Error al registrar: {errorContent}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
+        }
+    }
+}

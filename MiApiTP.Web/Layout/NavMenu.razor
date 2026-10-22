@@ -1,39 +1,28 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">MiApiTP.Web</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<MudNavMenu>
+    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        Home
+    </MudNavLink>
+    
+    <MudNavLink Href="counter" Icon="@Icons.Material.Filled.AddBox">
+        Counter
+    </MudNavLink>
+    
+    <MudNavLink Href="weather" Icon="@Icons.Material.Filled.WbSunny">
+        Weather
+    </MudNavLink>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
+    <!-- Módulo de Inventario / Ingresos -->
+    <MudNavGroup Title="Inventario" Icon="@Icons.Material.Filled.Inventory" Expanded="true">
+        <MudNavLink Href="Ingreso" Icon="@Icons.Material.Filled.ListAlt">
+            Historial de Ingresos
+        </MudNavLink>
+        <MudNavLink Href="Ingreso/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+            Nuevo Ingreso
+        </MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>
 
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+    // Ya no necesitamos manejar la lógica manual de colapso de CSS 
+    // porque MudNavMenu y MudNavLink se encargan de todo de forma nativa.
 }

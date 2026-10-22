@@ -1,0 +1,117 @@
+﻿@page "/Ingreso"
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<div class="d-flex justify-between align-center mb-4">
+    <MudText Typo="Typo.h4">Historial de Ingresos de Mercadería</MudText>
+    <MudButton Variant="Variant.Filled" 
+               Color="Color.Primary" 
+               StartIcon="@Icons.Material.Filled.Add" 
+               OnClick="IrNuevoIngreso">
+        Nuevo Ingreso
+    </MudButton>
+</div>
+
+<MudTable Items="ingresos" 
+          Hover="true" 
+          Breakpoint="Breakpoint.Sm" 
+          Loading="cargando" 
+          LoadingProgressColor="Color.Info"
+          Filter="new Func<ListarIngresoDTO,bool>(FiltrarIngresos)">
+    
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Ingresos Registrados</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" 
+                      Placeholder="Buscar por proveedor..." 
+                      Adornment="Adornment.Start" 
+                      AdornmentIcon="@Icons.Material.Filled.Search" 
+                      IconSize="Size.Medium" 
+                      Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Fecha</MudTh>
+        <MudTh>Proveedor</MudTh>
+        <MudTh>Registrado Por</MudTh>
+        <MudTh>Total Unidades</MudTh>
+        <MudTh Style="text-align:right;">Acciones</MudTh>
+    </HeaderContent>
+    
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="Fecha">@context.Fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</MudTd>
+        <MudTd DataLabel="Proveedor">@context.ProveedorRazonSocial</MudTd>
+        <MudTd DataLabel="Registrado Por">@context.UsuarioEmail</MudTd>
+        <MudTd DataLabel="Total Unidades">@context.TotalItems</MudTd>
+        <MudTd DataLabel="Acciones" Style="text-align:right;">
+            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
+                           Color="Color.Info" 
+                           Size="Size.Small" 
+                           Title="Ver Detalle" 
+                           OnClick="() => VerDetalle(context.Id)" />
+        </MudTd>
+    </RowTemplate>
+    
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }" />
+    </PagerContent>
+    
+    <NoRecordsContent>
+        <MudText>No se encontraron registros de ingresos.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+@code {
+    private List<ListarIngresoDTO> ingresos = new();
+    private bool cargando = true;
+    private string searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarIngresos();
+    }
+
+    private async Task CargarIngresos()
+    {
+        cargando = true;
+        try
+        {
+            ingresos = await Http.GetFromJsonAsync<List<ListarIngresoDTO>>("api/Ingreso") ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar el historial de ingresos: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private bool FiltrarIngresos(ListarIngresoDTO ingreso)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (ingreso.ProveedorRazonSocial.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private void IrNuevoIngreso()
+    {
+        Navigation.NavigateTo("/Ingreso/Nuevo");
+    }
+
+    private void VerDetalle(int id)
+    {
+        // Aquí más adelante puedes abrir un diálogo o navegar a una pantalla de detalle si lo deseas
+        Snackbar.Add($"Próximamente: Detalle del ingreso #{id}", Severity.Info);
+    }
+}

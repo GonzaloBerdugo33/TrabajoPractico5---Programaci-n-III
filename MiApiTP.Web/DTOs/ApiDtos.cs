@@ -53,6 +53,18 @@
         public int ProveedorId { get; set; }
     }
 
+    public class ProductoSelectDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+    }
+
+    public class ProveedorSelectDTO
+    {
+        public int Id { get; set; }
+        public string RazonSocial { get; set; } = string.Empty;
+    }
+
     public class SalidaDTO
     {
         public int Id { get; set; }
@@ -101,6 +113,15 @@
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
         public decimal Subtotal => Cantidad * PrecioUnitario;
+    }
+
+    public class ListarIngresoDTO
+    {
+        public int Id { get; set; }
+        public DateTime Fecha { get; set; }
+        public string ProveedorRazonSocial { get; set; } = string.Empty;
+        public string UsuarioEmail { get; set; } = string.Empty;
+        public int TotalItems { get; set; }
     }
 
     public class CrearIngresoDTO
