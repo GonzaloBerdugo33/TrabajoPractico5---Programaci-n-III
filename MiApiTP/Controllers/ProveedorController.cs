@@ -1,4 +1,5 @@
-﻿using MiApiTP.Modelos;
+﻿using MiApiTP.DTOs;
+using MiApiTP.Modelos;
 using MiApiTP.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,20 @@ namespace MiApiTP.Controllers
             var proveedor = await _service.ObtenerPorId(id);
             if (proveedor == null) return NotFound();
             return Ok(proveedor);
+        }
+
+        [HttpGet("Todos")]
+        public async Task<IActionResult> ObtenerTodosParaSelect()
+        {
+            var proveedor = await _service.ObtenerTodos();
+
+            var dto = proveedor.Select(p => new ProveedorSelectDTO
+            {
+                Id = p.Id,
+                RazonSocial = p.RazonSocial
+            }).ToList();
+
+            return Ok(dto);
         }
 
         [HttpPost]

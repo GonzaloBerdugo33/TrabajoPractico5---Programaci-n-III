@@ -22,6 +22,11 @@ namespace MiApiTP.Servicios
             return await _repositorio.ObtenerPorIdAsync(id);
         }
 
+        public async Task<List<Proveedor>> ObtenerTodos()
+        {
+            return await _repositorio.ObtenerTodosAsync();
+        }
+
         public async Task CrearProveedor(Proveedor proveedor) 
         {
             await _repositorio.AgregarAsync(proveedor);

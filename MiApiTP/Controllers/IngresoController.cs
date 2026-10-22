@@ -23,7 +23,16 @@ namespace MiApiTP.Controllers
         public async Task<IActionResult> ObtenerTodos() 
         {
             var ingresos = await _service.ListarIngresos();
-            return Ok(ingresos);
+            var dto = ingresos.Select(i => new ListarIngresoDTO
+            {
+                Id = i.Id,
+                Fecha = DateTime.UtcNow,
+                ProveedorRazonSocial = i.Proveedor?.RazonSocial?? "Desconocido",
+                UsuarioEmail = i.Usuario?.Email?? "Desconocido",
+                TotalItems = i.DetallesIngresos?.Sum(d => d.Cantidad) ?? 0
+            }).ToList();
+            
+            return Ok(dto);
         }
 
         [HttpGet("{id}")]

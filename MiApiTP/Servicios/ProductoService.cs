@@ -22,6 +22,11 @@ namespace MiApiTP.Servicios
             return await _repositorio.ObtenerPorIdAsync(id);
         }
 
+        public async Task<List<Producto>> ObtenerTodos()
+        {
+            return await _repositorio.ObtenerTodosAsync();
+        }
+
         public async Task CrearProducto(Producto producto) 
         {
             await _repositorio.AgregarAsync(producto);

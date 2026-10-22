@@ -36,6 +36,20 @@ namespace MiApiTP.Controllers
             return Ok(productosDto);
         }
 
+        [HttpGet("Todos")]
+        public async Task<IActionResult> ObtenerTodosParaSelect()
+        {
+            var productos = await _service.ObtenerTodos();
+
+            var dto = productos.Select(p => new ProductoSelectDTO
+            {
+                Id = p.Id,
+                Nombre = p.Nombre
+            }).ToList();
+
+            return Ok(dto);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
