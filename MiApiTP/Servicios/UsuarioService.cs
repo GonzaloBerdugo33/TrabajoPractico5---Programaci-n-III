@@ -1,4 +1,5 @@
-﻿using MiApiTP.Modelos;
+﻿using MiApiTP.DTOs;
+using MiApiTP.Modelos;
 using MiApiTP.Repositorios;
 
 namespace MiApiTP.Servicios
@@ -46,9 +47,31 @@ namespace MiApiTP.Servicios
                 return null;
             }
         }
-        public async Task CrearUsuario(Usuario usuario)
+        public async Task<UsuarioDTO> RegistrarAsync(CrearUsuarioDTO dto)
         {
+            var usuarioExistente = await _repositorio.ObtenerPorEmailAsync(dto.Email);
+            if (usuarioExistente != null)
+            {
+                throw new InvalidOperationException("El email ya se encuentra registrado.");
+            }
+
+            var usuario = new Usuario
+            {
+                Nombre = dto.Nombre,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Rol = dto.Rol
+            };
+
             await _repositorio.AgregarAsync(usuario);
+
+            return new UsuarioDTO
+            {
+                Id = usuario.Id,
+                Nombre = usuario.Nombre,
+                Email = usuario.Email,
+                Rol = usuario.Rol
+            };
         }
 
         public async Task ActualizarUsuario(Usuario usuario)

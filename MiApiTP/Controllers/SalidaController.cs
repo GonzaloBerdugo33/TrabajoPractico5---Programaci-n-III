@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     public class SalidaController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace MiApiTP.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos()
         {
-            var salidas = await _service.ListarSalidas();
+            var salidas = await _service.ListarSalidaAsync();
             return Ok(salidas);
         }
 
@@ -37,45 +37,22 @@ namespace MiApiTP.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(CrearSalidaDTO dto)
         {
-            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                                  ?? User.FindFirst("id")?.Value;
-
-            if (string.IsNullOrEmpty(usuarioIdClaim))
-            {
-                return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado desde el token." });
-            }
-
-            int usuarioIdLogueado = int.Parse(usuarioIdClaim);
-
             try
             {
-                var salida = new SalidaProducto
+                var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                  ?? User.FindFirst("id")?.Value;
+
+                if (string.IsNullOrEmpty(usuarioIdClaim))
                 {
-                    ClienteId = dto.ClienteId,
-                    UsuarioId = usuarioIdLogueado,
-                    Fecha = DateTime.UtcNow,
-                    DetallesProductos = dto.Detalles.Select(detalleDto => new SalidaDetalle
-                    {
-                        ProductoId = detalleDto.ProductoId,
-                        Cantidad = detalleDto.Cantidad
-                    }).ToList()
-                };
+                    return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado." });
+                }
 
-                await _service.RegistrarSalida(salida);
+                int usuarioIdLogueado = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("id")?.Value);
 
+                await _service.RegistrarSalidaAsync(dto, usuarioIdLogueado);
                 return Ok(new { mensaje = "Salida registrada con éxito" });
             }
-            catch (Exception ex)
-            {
-                // 🔍 Esto nos va a mostrar el error exacto y en qué línea ocurrió
-                var innerMessage = ex.InnerException != null ? ex.InnerException.Message : "Sin inner exception";
-                return BadRequest(new
-                {
-                    error = ex.Message,
-                    inner = innerMessage,
-                    stackTrace = ex.StackTrace
-                });
-            }
+            catch (Exception ex) { return BadRequest(new { error = ex.Message }); }
         }
     }
 }

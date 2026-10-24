@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using MiApiTP.Modelos;
 using MiApiTP.Servicios;
 using MiApiTP.DTOs;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace MiApiTP.Controllers
 {
@@ -20,7 +21,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerTodos()
         {
             var usuarios = await _service.ListarUsuarios();
@@ -31,11 +32,12 @@ namespace MiApiTP.Controllers
                 Email = u.Email,
                 Rol = u.Rol
             }).ToList();
+
             return Ok(dtos);
         }
 
         [HttpGet("{id}")]
-        [Authorize]
+        [Authorize(Roles ="Administrador")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             var usuario = await _service.ObtenerPorId(id);
@@ -64,36 +66,21 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Crear(CrearUsuarioDTO dto)
+        public async Task<IActionResult> Registrar(CrearUsuarioDTO dto)
         {
-            var usuarioExistente = await _service.ObtenerPorEmail(dto.Email);
-            if(usuarioExistente != null)
+            try
             {
-                return BadRequest("El email ya se encuentra registrado.");
+                var resultado = await _service.RegistrarAsync(dto);
+                return Ok(resultado);
             }
-            
-            var usuario = new Usuario
+            catch (InvalidOperationException ex)
             {
-                Nombre = dto.Nombre,
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Rol = "Cliente"
-            };
-            
-            await _service.CrearUsuario(usuario);
-
-            var resultado = new UsuarioDTO
-            {
-                Id = usuario.Id,
-                Nombre = usuario.Nombre,
-                Email = usuario.Email,
-                Rol = usuario.Rol
-            };
-            return Ok(resultado);
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Actualizar(int id, CrearUsuarioDTO dto)
         {
             var usuario = new Usuario
@@ -109,7 +96,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles ="Administrador")]
         public async Task<IActionResult> Eliminar(int id)
         {
             try

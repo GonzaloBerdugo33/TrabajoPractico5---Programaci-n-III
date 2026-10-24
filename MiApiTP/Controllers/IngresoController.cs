@@ -22,17 +22,8 @@ namespace MiApiTP.Controllers
         [HttpGet]
         public async Task<IActionResult> ObtenerTodos() 
         {
-            var ingresos = await _service.ListarIngresos();
-            var dto = ingresos.Select(i => new ListarIngresoDTO
-            {
-                Id = i.Id,
-                Fecha = DateTime.UtcNow,
-                ProveedorRazonSocial = i.Proveedor?.RazonSocial?? "Desconocido",
-                UsuarioEmail = i.Usuario?.Email?? "Desconocido",
-                TotalItems = i.DetallesIngresos?.Sum(d => d.Cantidad) ?? 0
-            }).ToList();
-            
-            return Ok(dto);
+            var dtos = await _service.ListarIngresosAsync();
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
@@ -46,34 +37,19 @@ namespace MiApiTP.Controllers
         [HttpPost]
         public async Task<IActionResult> Crear(CrearIngresoDTO dto)
         {
-            try 
+            try
             {
                 var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
                                   ?? User.FindFirst("id")?.Value;
 
                 if (string.IsNullOrEmpty(usuarioIdClaim))
                 {
-                    return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado desde el token." });
+                    return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado." });
                 }
 
                 int usuarioIdLogueado = int.Parse(usuarioIdClaim);
-                var ingreso = new IngresoProducto
-                {
-                    ProveedorId = dto.ProveedorId,
-                    UsuarioId = usuarioIdLogueado,
-                    Fecha = DateTime.UtcNow,
 
-
-                    DetallesIngresos = dto.Detalles.Select(detalleDto => new IngresoDetalle
-                    {
-                        ProductoId = detalleDto.ProductoId,
-                        Cantidad = detalleDto.Cantidad
-
-                    }).ToList()
-                };
-
-
-                await _service.RegistrarIngreso(ingreso);
+                await _service.RegistrarIngresoAsync(dto, usuarioIdLogueado);
 
                 return Ok(new { mensaje = "Ingreso registrado con éxito" });
             }

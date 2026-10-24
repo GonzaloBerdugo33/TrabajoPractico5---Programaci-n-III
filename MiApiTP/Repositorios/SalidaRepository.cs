@@ -16,8 +16,9 @@ namespace MiApiTP.Repositorios
         public async Task<List<SalidaProducto>> ObtenerTodosAsync()
         {
             return await _context.Salidas
-                .Include(s => s.DetallesProductos) 
-                    .ThenInclude(d => d.Producto)  
+                .Include(s => s.Cliente)
+                .Include(s => s.Usuario)
+                .Include(s => s.DetallesProductos)
                 .ToListAsync();
         }
 
