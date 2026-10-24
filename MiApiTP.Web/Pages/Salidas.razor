@@ -1,0 +1,116 @@
+﻿@page "/Salida"
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<div class="d-flex justify-between align-center mb-4">
+    <MudText Typo="Typo.h4">Gestión de Salidas de Mercadería</MudText>
+    <MudButton Variant="Variant.Filled" 
+               Color="Color.Primary" 
+               StartIcon="@Icons.Material.Filled.Add" 
+               OnClick="IrNuevaSalida">
+        Registrar Nueva Salida
+    </MudButton>
+</div>
+
+<MudTable Items="salidas" 
+          Hover="true" 
+          Breakpoint="Breakpoint.Sm" 
+          Loading="cargando" 
+          LoadingProgressColor="Color.Info"
+          Filter="new Func<ListarSalidaDTO,bool>(FiltrarSalidas)">
+    
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Salidas Registradas</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" 
+                      Placeholder="Buscar por cliente..." 
+                      Adornment="Adornment.Start" 
+                      AdornmentIcon="@Icons.Material.Filled.Search" 
+                      IconSize="Size.Medium" 
+                      Class="mt-0">
+        </MudTextField>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Fecha</MudTh>
+        <MudTh>Cliente</MudTh>
+        <MudTh>Registrado Por</MudTh>
+        <MudTh>Total Unidades</MudTh>
+        <MudTh Style="text-align:right;">Acciones</MudTh>
+    </HeaderContent>
+    
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="Fecha">@context.Fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</MudTd>
+        <MudTd DataLabel="Cliente">@context.ClienteNombre</MudTd>
+        <MudTd DataLabel="Registrado Por">@context.UsuarioEmail</MudTd>
+        <MudTd DataLabel="Total Unidades">@context.TotalItems</MudTd>
+        <MudTd DataLabel="Acciones" Style="text-align:right;">
+            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
+                           Color="Color.Info" 
+                           Size="Size.Small" 
+                           Title="Ver Detalle" 
+                           OnClick="() => VerDetalle(context.Id)" />
+        </MudTd>
+    </RowTemplate>
+    
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 5, 10, 20 }" />
+    </PagerContent>
+    
+    <NoRecordsContent>
+        <MudText>No se encontraron registros de salidas.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+@code {
+    private List<ListarSalidaDTO> salidas = new();
+    private bool cargando = true;
+    private string searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarSalidas();
+    }
+
+    private async Task CargarSalidas()
+    {
+        cargando = true;
+        try
+        {
+            salidas = await Http.GetFromJsonAsync<List<ListarSalidaDTO>>("api/Salida") ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar el historial de salidas: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private bool FiltrarSalidas(ListarSalidaDTO salida)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (salida.ClienteNombre.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private void IrNuevaSalida()
+    {
+        Navigation.NavigateTo("/Salida/Nuevo");
+    }
+
+    private void VerDetalle(int id)
+    {
+        Snackbar.Add($"Próximamente: Detalle de la salida #{id}", Severity.Info);
+    }
+}

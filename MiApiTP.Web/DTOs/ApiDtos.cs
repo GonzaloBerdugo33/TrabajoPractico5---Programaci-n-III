@@ -29,7 +29,7 @@
         public string Nombre { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public string Rol { get; set; } = string.Empty;
+        public string Rol { get; set; } = "Cliente";
     }
 
     public class ProductoDTO
@@ -65,6 +65,12 @@
         public string RazonSocial { get; set; } = string.Empty;
     }
 
+    public class ClienteSelectDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+    }
+
     public class SalidaDTO
     {
         public int Id { get; set; }
@@ -82,6 +88,15 @@
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
         public decimal Subtotal => Cantidad * PrecioUnitario;
+    }
+
+    public class ListarSalidaDTO
+    {
+        public int Id { get; set; }
+        public DateTime Fecha { get; set; }
+        public string ClienteNombre { get; set; } = string.Empty;
+        public string UsuarioEmail { get; set; } = string.Empty;
+        public int TotalItems { get; set; }
     }
 
     public class CrearSalidaDTO
@@ -135,4 +150,11 @@
         public int ProductoId { get; set; }
         public int Cantidad { get; set; }
     }
+
+    public class CategoriaProductoDTO
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+    }
+
 }

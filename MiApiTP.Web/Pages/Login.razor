@@ -1,0 +1,78 @@
+﻿@page "/Login"
+@using MiApiTP.Web.DTOs
+@using MiApiTP.Web.Auth;
+@inject HttpClient Http
+@inject ILocalStorageService LocalStorage
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-16">
+    <MudCard Elevation="4">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h5">Iniciar Sesión</MudText>
+            </CardHeaderContent>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudTextField @bind-Value="loginDto.Email" 
+                          Label="Correo Electrónico" 
+                          Variant="Variant.Outlined" 
+                          InputType="InputType.Email" 
+                          Class="mb-4" />
+
+            <MudTextField @bind-Value="loginDto.Password" 
+                          Label="Contraseña" 
+                          Variant="Variant.Outlined" 
+                          InputType="InputType.Password" />
+        </MudCardContent>
+        <MudCardActions Class="pa-4">
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       FullWidth="true" 
+                       OnClick="HandleLogin">
+                Ingresar
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private LoginDTO loginDto = new();
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Usuario/Login", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResultDTO>();
+                
+                if (result != null && !string.IsNullOrEmpty(result.Token))
+                {
+                    // 1. Guardar el token en el LocalStorage
+                    await LocalStorage.SetItemAsync("authToken", result.Token);
+
+                    // 2. Notificar al AuthStateProvider que el usuario inició sesión
+                    ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(result.Token);
+
+                    Snackbar.Add($"¡Bienvenido al sistema!", Severity.Success);
+                    
+                    // 3. Redirigir a ingresos (ahora sí con permisos de Administrador)
+                    Navigation.NavigateTo("/");
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Snackbar.Add($"Error: {error}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
+        }
+    }
+}

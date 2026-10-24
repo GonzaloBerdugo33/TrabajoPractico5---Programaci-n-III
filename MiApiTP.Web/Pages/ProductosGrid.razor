@@ -1,4 +1,4 @@
-﻿@page "/productos-grid"
+﻿@page "/Productos-grid"
 @inject HttpClient Http
 @using Microsoft.AspNetCore.Authorization
 @using MiApiTP.Web.DTOs
@@ -61,7 +61,7 @@ else
 
             <!-- Columna de Acciones -->
             <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Acciones" Context="prod" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Center">
-                <AuthorizeView Roles="Admin">
+                <AuthorizeView Roles="Administrador">
                     <a href="/subir-imagen" class="btn btn-sm btn-outline-primary">+ Img</a>
                 </AuthorizeView>
             </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>

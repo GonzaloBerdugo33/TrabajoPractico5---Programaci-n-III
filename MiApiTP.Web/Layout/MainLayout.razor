@@ -40,53 +40,78 @@ Title="Cerrar Sesión" />
 <MudButton Variant="Variant.Text"
 Color="Color.Inherit"
 StartIcon="@Icons.Material.Filled.Login"
-Href="/login">
+Href="/Login">
 Ingresar
 </MudButton>
 </NotAuthorized>
 </AuthorizeView>
 </MudAppBar>
 <!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
+<!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
 <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="3"
-Variant="DrawerVariant.Responsive">
-<MudDrawerHeader>
-<MudText Typo="Typo.subtitle1" Class="font-weight-bold" Color="Color.Primary">
-Panel Principal
-</MudText>
-</MudDrawerHeader>
-<MudNavMenu>
-<MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-Inicio
-</MudNavLink>
-<MudNavGroup Title="Catálogo" Icon="@Icons.Material.Filled.Storefront" Expanded="true">
-<MudNavLink Href="/productos" Icon="@Icons.Material.Filled.ShoppingBag">
-Productos (Tarjetas)
-</MudNavLink>
-<MudNavLink Href="/productos-grid" Icon="@Icons.Material.Filled.TableRows">
-Productos (QuickGrid)
-</MudNavLink>
-</MudNavGroup>
-<!-- Menú exclusivo para Administradores -->
-<AuthorizeView Roles="Admin">
-<MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings"
-Expanded="true">
-<MudNavLink Href="/usuarios-grid" Icon="@Icons.Material.Filled.People">
-Gestión Usuarios
-</MudNavLink>
-<MudNavLink Href="/subir-imagen" Icon="@Icons.Material.Filled.CloudUpload">
-Subir Imágenes
-</MudNavLink>
-<MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">
-Reportes PDF
-</MudNavLink>
-</MudNavGroup>
-</AuthorizeView>
-<MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
-Acerca de
-</MudNavLink>
-</MudNavMenu>
-</MudDrawer>
-<!-- Contenedor Principal de la Página -->
+          Variant="DrawerVariant.Responsive">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.subtitle1" Class="font-weight-bold" Color="Color.Primary">
+            Panel Principal
+        </MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+            Inicio
+        </MudNavLink>
+
+        <MudNavGroup Title="Catálogo" Icon="@Icons.Material.Filled.Storefront" Expanded="true">
+            <MudNavLink Href="/Producto" Icon="@Icons.Material.Filled.ShoppingBag">
+                Productos (Tarjetas)
+            </MudNavLink>
+            <MudNavLink Href="/productos-grid" Icon="@Icons.Material.Filled.TableRows">
+                Productos (QuickGrid)
+            </MudNavLink>
+        </MudNavGroup>
+
+        <!-- Menú exclusivo para Administradores -->
+        <AuthorizeView Roles="Administrador">
+            <Authorized>
+               <MudNavGroup Title="Categorias" Icon="@Icons.Material.Filled.Category" Expanded="false">
+                    <MudNavLink Href="/Categoria" Icon="@Icons.Material.Filled.ListAlt">
+                        Gestion de Categorias
+                    </MudNavLink>
+                </MudNavGroup>
+
+                <MudNavGroup Title="Inventario" Icon="@Icons.Material.Filled.Inventory" Expanded="true">
+                    <MudNavLink Href="/Ingreso" Icon="@Icons.Material.Filled.ListAlt">
+                        Historial de Ingresos
+                    </MudNavLink>
+                    <MudNavLink Href="/Ingreso/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                        Nuevo Ingreso
+                    </MudNavLink>
+                    <MudNavLink Href="/Salida" Icon="@Icons.Material.Filled.ListAlt">
+                        Historial de Salidas
+                    </MudNavLink>
+                    <MudNavLink Href="/Salida/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                        Nueva Salida
+                    </MudNavLink>
+                </MudNavGroup>
+
+                <MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="false">
+                    <MudNavLink Href="/usuarios-grid" Icon="@Icons.Material.Filled.People">
+                        Gestión Usuarios
+                    </MudNavLink>
+                    <MudNavLink Href="/subir-imagen" Icon="@Icons.Material.Filled.CloudUpload">
+                        Subir Imágenes
+                    </MudNavLink>
+                    <MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">
+                        Reportes PDF
+                    </MudNavLink>
+                </MudNavGroup>
+            </Authorized>
+        </AuthorizeView>
+
+        <MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
+            Acerca de
+        </MudNavLink>
+    </MudNavMenu>
+</MudDrawer><!-- Contenedor Principal de la Página -->
 <MudMainContent Class="pa-6">
 @Body
 </MudMainContent>
@@ -98,7 +123,7 @@ private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 private async Task CerrarSesion()
     {
         await AuthService.LogoutAsync();
-        Nav.NavigateTo("/login");
+        Nav.NavigateTo("/Login");
     }
     // Configuración de Paleta de Colores de la Marca
     private readonly MudTheme _miTemaPersonalizado = new()

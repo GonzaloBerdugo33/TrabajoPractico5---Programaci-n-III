@@ -1,0 +1,187 @@
+﻿@page "/Salida/Nuevo"
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Registrar Nueva Salida de Mercadería</MudText>
+
+<MudGrid>
+    <!-- Selección de Cliente -->
+    <MudItem xs="12" md="6">
+        <MudSelect T="int" Label="Cliente" @bind-Value="salidaDto.ClienteId" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @if (clientes == null)
+            {
+                <MudSelectItem Value="0" Disabled="true">Cargando clientes...</MudSelectItem>
+            }
+            else
+            {
+                @foreach (var cli in clientes)
+                {
+                    <MudSelectItem Value="@cli.Id">@cli.Nombre</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+<MudDivider Class="my-4" />
+<MudText Typo="Typo.h6" Class="mb-2">Agregar Productos a la Salida</MudText>
+
+<!-- Formulario temporal para agregar detalles -->
+<MudGrid AlignItems="Center">
+    <MudItem xs="12" md="6">
+        <MudSelect T="int" Label="Seleccionar Producto" @bind-Value="productoSeleccionadoId" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @if (productos == null)
+            {
+                <MudSelectItem Value="0" Disabled="true">Cargando productos...</MudSelectItem>
+            }
+            else
+            {
+                @foreach (var prod in productos)
+                {
+                    <MudSelectItem Value="@prod.Id">@prod.Nombre</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudNumericField T="int" Label="Cantidad" @bind-Value="cantidadSeleccionada" Min="1" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" md="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="AgregarDetalle">Agregar</MudButton>
+    </MudItem>
+</MudGrid>
+
+<!-- Tabla de Detalles Agregados -->
+<MudTable Items="salidaDto.Detalles" Class="mt-4" Hover="true" Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Producto ID</MudTh>
+        <MudTh>Producto</MudTh>
+        <MudTh>Cantidad</MudTh>
+        <MudTh Style="text-align:right;">Acciones</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Producto ID">@context.ProductoId</MudTd>
+        <MudTd DataLabel="Producto">@ObtenerNombreProducto(context.ProductoId)</MudTd>
+        <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+        <MudTd DataLabel="Acciones" Style="text-align:right;">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => RemoverDetalle(context)" />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No hay productos agregados a esta salida todavía.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+<!-- Botón Guardar Final -->
+<div class="d-flex justify-end mt-6">
+    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" OnClick="GuardarSalida">
+        Registrar Salida en el Sistema
+    </MudButton>
+</div>
+
+@code {
+    private CrearSalidaDTO salidaDto = new();
+    private List<ClienteSelectDTO>? clientes;
+    private List<ProductoSelectDTO>? productos;
+
+    private int productoSeleccionadoId;
+    private int cantidadSeleccionada = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDatosSelects();
+    }
+
+    private async Task CargarDatosSelects()
+    {
+        try
+        {
+            clientes = await Http.GetFromJsonAsync<List<ClienteSelectDTO>>("api/Cliente/Todos");
+            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto/Todos");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar catálogos: {ex.Message}", Severity.Error);
+        }
+    }
+
+   private string ObtenerNombreProducto(int productoId) =>
+        productos?.FirstOrDefault(p => p.Id == productoId)?.Nombre ?? "Desconocido";
+
+
+    private void AgregarDetalle()
+    {
+        if (productoSeleccionadoId == 0)
+        {
+            Snackbar.Add("Debe seleccionar un producto válido.", Severity.Warning);
+            return;
+        }
+
+        if (cantidadSeleccionada <= 0)
+        {
+            Snackbar.Add("La cantidad debe ser mayor a cero.", Severity.Warning);
+            return;
+        }
+
+        var existente = salidaDto.Detalles.FirstOrDefault(d => d.ProductoId == productoSeleccionadoId);
+        if (existente != null)
+        {
+            existente.Cantidad += cantidadSeleccionada;
+        }
+        else
+        {
+            salidaDto.Detalles.Add(new CrearSalidaDetalleDTO
+            {
+                ProductoId = productoSeleccionadoId,
+                Cantidad = cantidadSeleccionada
+            });
+        }
+
+        productoSeleccionadoId = 0;
+        cantidadSeleccionada = 1;
+    }
+
+    private void RemoverDetalle(CrearSalidaDetalleDTO detalle)
+    {
+        salidaDto.Detalles.Remove(detalle);
+    }
+
+    private async Task GuardarSalida()
+    {
+        if (salidaDto.ClienteId == 0)
+        {
+            Snackbar.Add("Debe seleccionar un cliente.", Severity.Error);
+            return;
+        }
+
+        if (!salidaDto.Detalles.Any())
+        {
+            Snackbar.Add("La salida debe contener al menos un producto.", Severity.Error);
+            return;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Salida", salidaDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("¡Salida registrado con éxito y stock actualizado!", Severity.Success);
+                Navigation.NavigateTo("/Salida");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Snackbar.Add($"Error al registrar: {errorContent}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
+        }
+    }
+}

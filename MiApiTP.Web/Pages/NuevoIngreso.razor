@@ -28,7 +28,6 @@
 </MudGrid>
 
 <MudDivider Class="my-4" />
-
 <MudText Typo="Typo.h6" Class="mb-2">Agregar Productos al Ingreso</MudText>
 
 <!-- Formulario temporal para agregar detalles -->
@@ -59,16 +58,16 @@
 <!-- Tabla de Detalles Agregados -->
 <MudTable Items="ingresoDto.Detalles" Class="mt-4" Hover="true" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
-        <TH>Producto ID</TH>
-        <TH>Cantidad</TH>
-        <TH>Acciones</TH>
+        <MudTh>Producto ID</MudTh>
+        <MudTh>Cantidad</MudTh>
+        <MudTh Style="text-align:right;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <TD DataLabel="Producto ID">@context.ProductoId</TD>
-        <TD DataLabel="Cantidad">@context.Cantidad</TD>
-        <TD DataLabel="Acciones">
+        <MudTd DataLabel="Producto ID">@context.ProductoId</MudTd>
+        <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+        <MudTd DataLabel="Acciones" Style="text-align:right;">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => RemoverDetalle(context)" />
-        </TD>
+        </MudTd>
     </RowTemplate>
     <NoRecordsContent>
         <MudText>No hay productos agregados a este ingreso todavía.</MudText>
@@ -136,7 +135,6 @@
             });
         }
 
-        // Resetear selección temporal
         productoSeleccionadoId = 0;
         cantidadSeleccionada = 1;
     }

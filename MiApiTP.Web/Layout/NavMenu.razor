@@ -1,6 +1,6 @@
 ﻿<MudNavMenu>
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-        Home
+        Inicio
     </MudNavLink>
     
     <MudNavLink Href="counter" Icon="@Icons.Material.Filled.AddBox">
@@ -11,7 +11,6 @@
         Weather
     </MudNavLink>
 
-    <!-- Módulo de Inventario / Ingresos -->
     <MudNavGroup Title="Inventario" Icon="@Icons.Material.Filled.Inventory" Expanded="true">
         <MudNavLink Href="Ingreso" Icon="@Icons.Material.Filled.ListAlt">
             Historial de Ingresos
@@ -19,10 +18,11 @@
         <MudNavLink Href="Ingreso/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
             Nuevo Ingreso
         </MudNavLink>
+                <MudNavLink Href="Salida" Icon="@Icons.Material.Filled.ListAlt">
+            Historial de Salidas
+        </MudNavLink>
+        <MudNavLink Href="Salida/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+            Nueva Salida
+        </MudNavLink>
     </MudNavGroup>
 </MudNavMenu>
-
-@code {
-    // Ya no necesitamos manejar la lógica manual de colapso de CSS 
-    // porque MudNavMenu y MudNavLink se encargan de todo de forma nativa.
-}
