@@ -8,6 +8,7 @@ namespace MiApiTP.Data
         public MiApiTPContext(DbContextOptions<MiApiTPContext> options) : base(options)
         {
         }
+        public DbSet<Auditoria> Auditorias { get; set; }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<CategoriaProducto> Categorias { get; set; }
         public DbSet<Cliente> Clientes { get; set; }

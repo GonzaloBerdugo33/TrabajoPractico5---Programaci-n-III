@@ -22,6 +22,52 @@ namespace MiApiTP.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("MiApiTP.Modelos.Auditoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Accion")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Entidad")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("EntidadId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Ip")
+                        .HasMaxLength(45)
+                        .HasColumnType("character varying(45)");
+
+                    b.Property<string>("UsuarioEmail")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Auditorias");
+                });
+
             modelBuilder.Entity("MiApiTP.Modelos.CategoriaProducto", b =>
                 {
                     b.Property<int>("Id")
