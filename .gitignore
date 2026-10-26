@@ -6,3 +6,4 @@ obj/
 !**/wwwroot/uploads/.gitkeep
 appsettings.Development.json
 MiApiTP/appsettings.Development.json
+Logs/

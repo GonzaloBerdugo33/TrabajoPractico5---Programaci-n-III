@@ -1,0 +1,18 @@
+2026-10-26 00:18:14.692 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:18:14.783 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:18:17.783 -03:00 [INF] API iniciada correctamente
+2026-10-26 00:18:18.241 -03:00 [INF] Now listening on: https://localhost:7078
+2026-10-26 00:18:18.243 -03:00 [INF] Now listening on: http://localhost:5009
+2026-10-26 00:18:18.634 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-26 00:18:18.637 -03:00 [INF] Hosting environment: Development
+2026-10-26 00:18:18.639 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
+2026-10-26 00:18:39.549 -03:00 [INF] HTTP GET / respondió 301 en 14.5581 ms
+2026-10-26 00:18:39.761 -03:00 [INF] HTTP GET /index.html respondió 200 en 164.1227 ms
+2026-10-26 00:18:39.777 -03:00 [INF] HTTP GET /index.js respondió 200 en 1.0937 ms
+2026-10-26 00:18:39.825 -03:00 [INF] HTTP GET /index.css respondió 200 en 50.8078 ms
+2026-10-26 00:18:39.869 -03:00 [INF] HTTP GET /swagger-ui-standalone-preset.js respondió 200 en 94.1673 ms
+2026-10-26 00:18:39.881 -03:00 [INF] HTTP GET /swagger-ui.css respondió 200 en 105.9657 ms
+2026-10-26 00:18:39.909 -03:00 [INF] HTTP GET /swagger-ui-bundle.js respondió 200 en 134.5664 ms
+2026-10-26 00:18:40.297 -03:00 [INF] HTTP GET /favicon-32x32.png respondió 200 en 4.0131 ms
+2026-10-26 00:18:40.344 -03:00 [INF] HTTP GET /swagger/v1/swagger.json respondió 200 en 98.3229 ms
+2026-10-26 00:19:15.957 -03:00 [INF] HTTP POST /api/Usuario/Login respondió 200 en 1443.4450 ms
