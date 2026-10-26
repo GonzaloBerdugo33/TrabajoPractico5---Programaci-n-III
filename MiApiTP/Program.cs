@@ -67,6 +67,8 @@ builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<IngresoService>();
 builder.Services.AddScoped<SalidaService>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AuditoriaService>();
 
 builder.Services.AddAuthentication(options =>
 {
