@@ -25,8 +25,10 @@ namespace MiApiTP.Repositorios
         public async Task<SalidaProducto> ObtenerPorIdAsync(int id)
         {
             return await _context.Salidas
+                .Include(s => s.Cliente)
+                .Include(s => s.Usuario)
                 .Include(s => s.DetallesProductos)
-                    .ThenInclude(d => d.Producto)
+                .ThenInclude(d => d.Producto)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 

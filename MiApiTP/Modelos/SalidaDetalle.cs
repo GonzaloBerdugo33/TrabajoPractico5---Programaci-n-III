@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MiApiTP.Modelos
 {
@@ -7,6 +8,8 @@ namespace MiApiTP.Modelos
         public int Id {  get; set; }
         // FK
         public int ProductoId { get; set; }
+        
+        [ForeignKey("ProductoId")]
         public Producto? Producto { get; set; }
         //FK
         public int SalidaProductoId {  get; set; }

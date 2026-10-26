@@ -37,11 +37,21 @@ namespace MiApiTP.Servicios
             return await _ingresoRepository.ObtenerPorIdAsync(id);
         }
 
-        public async Task RegistrarIngresoAsync(CrearIngresoDTO dto, int usuarioId)
+        public async Task<int> RegistrarIngresoAsync(CrearIngresoDTO dto, int usuarioId)
         {
+            if (dto.ProveedorId <= 0)
+            {
+                throw new Exception("Debe indicar un proveedor válido.");
+            }
+
             if (dto.Detalles == null || !dto.Detalles.Any())
             {
                 throw new Exception("El ingreso debe contener al menos un detalle de producto.");
+            }
+
+            if (dto.Detalles.Any(d => d.Cantidad <= 0))
+            {
+                throw new ArgumentException("Las cantidades de los productos deben ser mayores a cero.");
             }
 
             var ingreso = new IngresoProducto
@@ -65,14 +75,13 @@ namespace MiApiTP.Servicios
                     throw new Exception($"El producto con ID {detalles.ProductoId} no existe.");
                 }
 
-                Console.WriteLine($"--- DEBUG --- Producto: {producto.Nombre} | Stock leído de BD: {producto.Stock} | Cantidad a sumar: {detalles.Cantidad}");
-
                 producto.Stock += detalles.Cantidad;
 
-                Console.WriteLine($"--- DEBUG --- Nuevo stock calculado a guardar: {producto.Stock}");
             }
 
             await _ingresoRepository.AgregarAsync(ingreso);
+
+            return ingreso.Id;
         }
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MiApiTP.Migrations
 {
     /// <inheritdoc />
-    public partial class Esquema3FNAbsolutoPuro : Migration
+    public partial class InicialLimpiaCorregida : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,6 @@ namespace MiApiTP.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nombre = table.Column<string>(type: "text", nullable: false),
-                    Apellido = table.Column<string>(type: "text", nullable: false),
                     DNI = table.Column<string>(type: "text", nullable: false),
                     Telefono = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false)
@@ -83,7 +82,7 @@ namespace MiApiTP.Migrations
                     Nombre = table.Column<string>(type: "text", nullable: false),
                     Precio = table.Column<decimal>(type: "numeric", nullable: false),
                     Stock = table.Column<int>(type: "integer", nullable: false),
-                    ImagenUrl = table.Column<string>(type: "text", nullable: false),
+                    ImagenUrl = table.Column<string>(type: "text", nullable: true),
                     CategoriaId = table.Column<int>(type: "integer", nullable: false),
                     ProveedorId = table.Column<int>(type: "integer", nullable: false)
                 },

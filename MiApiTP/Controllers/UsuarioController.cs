@@ -66,6 +66,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost("Register")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Registrar(CrearUsuarioDTO dto)
         {
             try

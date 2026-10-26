@@ -140,7 +140,7 @@ using (var scope = app.Services.CreateScope())
             {
                 Nombre = "Administrador",
                 Email = "admin@pos.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123*"),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(builder.Configuration["Admin:Password"] ?? "Admin123*"),
                 Rol = "Administrador"
             };
 

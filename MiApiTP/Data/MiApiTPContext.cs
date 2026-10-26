@@ -29,10 +29,16 @@ namespace MiApiTP.Data
                 .HasForeignKey(d => d.SalidaProductoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<SalidaProducto>()
+                .Property(s => s.MetodoPago)
+                .HasMaxLength(20)
+                .HasDefaultValue("Efectivo");
+
             modelBuilder.Entity<SalidaDetalle>()
                 .HasOne(d => d.Producto)
                 .WithMany()
-                .HasForeignKey(d => d.ProductoId);
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Relación IngresoProducto -> IngresoDetalles
             modelBuilder.Entity<IngresoProducto>()
@@ -44,7 +50,8 @@ namespace MiApiTP.Data
             modelBuilder.Entity<IngresoDetalle>()
                 .HasOne(d => d.Producto)
                 .WithMany()
-                .HasForeignKey(d => d.ProductoId);
+                .HasForeignKey(d => d.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

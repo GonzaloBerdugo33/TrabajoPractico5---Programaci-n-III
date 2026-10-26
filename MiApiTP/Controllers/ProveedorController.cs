@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 namespace MiApiTP.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     public class ProveedorController : ControllerBase
     {
@@ -47,8 +48,14 @@ namespace MiApiTP.Controllers
             return Ok(dto);
         }
 
+        [HttpGet("ListarTodos")]
+        public async Task<IActionResult> ObtenerTodosParaGrid()
+        {
+            var proveedores = await _service.ObtenerTodos();
+            return Ok(proveedores);
+        }
+
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Crear(Proveedor proveedor) 
         {
             await _service.CrearProveedor(proveedor);
@@ -56,7 +63,6 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> Actualizar(int id, Proveedor proveedor) 
         {
             if (id != proveedor.Id) return BadRequest();
@@ -65,7 +71,6 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> Eliminar(int id)
         {
             try

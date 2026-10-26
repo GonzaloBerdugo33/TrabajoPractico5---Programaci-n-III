@@ -47,10 +47,6 @@ namespace MiApiTP.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("DNI")
                         .IsRequired()
                         .HasColumnType("text");
@@ -245,6 +241,13 @@ namespace MiApiTP.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("Efectivo");
+
                     b.Property<int>("UsuarioId")
                         .HasColumnType("integer");
 
@@ -297,7 +300,7 @@ namespace MiApiTP.Migrations
                     b.HasOne("MiApiTP.Modelos.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiApiTP.Modelos.Producto", null)
@@ -352,7 +355,7 @@ namespace MiApiTP.Migrations
                     b.HasOne("MiApiTP.Modelos.Producto", "Producto")
                         .WithMany()
                         .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiApiTP.Modelos.Producto", null)

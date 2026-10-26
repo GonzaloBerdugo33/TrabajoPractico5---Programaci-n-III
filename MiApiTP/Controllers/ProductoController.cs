@@ -37,6 +37,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("Todos")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerTodosParaSelect()
         {
             var productos = await _service.ObtenerTodos();
@@ -44,7 +45,9 @@ namespace MiApiTP.Controllers
             var dto = productos.Select(p => new ProductoSelectDTO
             {
                 Id = p.Id,
-                Nombre = p.Nombre
+                Nombre = p.Nombre,
+                Precio = p.Precio,
+                Stock = p.Stock
             }).ToList();
 
             return Ok(dto);
@@ -71,7 +74,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Crear(CrearProductoDTO dto)
         {
             var producto = new Producto
@@ -84,11 +87,23 @@ namespace MiApiTP.Controllers
                 ProveedorId = dto.ProveedorId,
             };
             await _service.CrearProducto(producto);
-            return Ok(producto);
+            
+            var productoDto = new ProductoDTO
+            {
+                Id = producto.Id,
+                Nombre = producto.Nombre,
+                Precio = producto.Precio,
+                Stock = producto.Stock,
+                ImagenUrl = producto.ImagenUrl,
+                CategoriaNombre = "...",
+                ProveedorNombre = "..."
+            };
+
+            return Ok(productoDto);
         }
 
         [HttpPost("{id}/imagen")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> SubirImagen(int id, IFormFile archivo)
         {
             try
@@ -103,7 +118,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Actualizar(int id, CrearProductoDTO dto)
         {
             var producto = new Producto
@@ -122,7 +137,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Eliminar(int id)
         {
             try

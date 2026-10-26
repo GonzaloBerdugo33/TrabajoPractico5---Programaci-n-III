@@ -33,7 +33,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Crear(CategoriaProducto categoria) 
         {
             await _service.CrearCategoria(categoria);
@@ -41,7 +41,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Actualizar(int id, CategoriaProducto categoria) 
         {
             if (id != categoria.Id) return BadRequest();
@@ -50,7 +50,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Eliminar(int id) 
         {
             try 

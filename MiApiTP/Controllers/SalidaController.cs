@@ -29,9 +29,9 @@ namespace MiApiTP.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
-            var salida = await _service.ObtenerPorId(id);
-            if (salida == null) return NotFound();
-            return Ok(salida);
+            var dto = await _service.ObtenerDetalleAsync(id);
+            if (dto == null) return NotFound();
+            return Ok(dto);
         }
 
         [HttpPost]
@@ -47,12 +47,15 @@ namespace MiApiTP.Controllers
                     return Unauthorized(new { mensaje = "No se pudo identificar al usuario autenticado." });
                 }
 
-                int usuarioIdLogueado = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? User.FindFirst("id")?.Value);
+                int usuarioIdLogueado = int.Parse(usuarioIdClaim);
 
-                await _service.RegistrarSalidaAsync(dto, usuarioIdLogueado);
-                return Ok(new { mensaje = "Salida registrada con éxito" });
+                var id = await _service.RegistrarSalidaAsync(dto, usuarioIdLogueado);
+                return Ok(new { id });
             }
-            catch (Exception ex) { return BadRequest(new { error = ex.Message }); }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
     }
 }
