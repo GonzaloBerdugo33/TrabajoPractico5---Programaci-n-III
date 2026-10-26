@@ -1,4 +1,5 @@
 using MiApiTP.Data;
+using MiApiTP.Middleware;
 using MiApiTP.Modelos;
 using MiApiTP.Repositorios;
 using MiApiTP.Servicios;
@@ -6,8 +7,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.Text;
 using Serilog;
+using System.Text;
+
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -103,6 +105,8 @@ app.UseSerilogRequestLogging(options =>
 {
     options.MessageTemplate = "HTTP {RequestMethod} {RequestPath} respondió {StatusCode} en {Elapsed:0.0000} ms";
 });
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.MapOpenApi();

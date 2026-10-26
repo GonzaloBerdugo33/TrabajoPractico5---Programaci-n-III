@@ -16,3 +16,40 @@
 2026-10-26 00:18:40.297 -03:00 [INF] HTTP GET /favicon-32x32.png respondió 200 en 4.0131 ms
 2026-10-26 00:18:40.344 -03:00 [INF] HTTP GET /swagger/v1/swagger.json respondió 200 en 98.3229 ms
 2026-10-26 00:19:15.957 -03:00 [INF] HTTP POST /api/Usuario/Login respondió 200 en 1443.4450 ms
+2026-10-26 00:31:49.942 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:31:50.031 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:31:52.057 -03:00 [INF] API iniciada correctamente
+2026-10-26 00:31:52.578 -03:00 [INF] Now listening on: https://localhost:7078
+2026-10-26 00:31:52.581 -03:00 [INF] Now listening on: http://localhost:5009
+2026-10-26 00:31:52.698 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-26 00:31:52.702 -03:00 [INF] Hosting environment: Development
+2026-10-26 00:31:52.717 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
+2026-10-26 00:32:16.408 -03:00 [INF] HTTP GET /index.html/error-prueba respondió 404 en 90.3159 ms
+2026-10-26 00:33:58.470 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:33:58.562 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:34:00.978 -03:00 [INF] API iniciada correctamente
+2026-10-26 00:34:01.471 -03:00 [INF] Now listening on: https://localhost:7078
+2026-10-26 00:34:01.473 -03:00 [INF] Now listening on: http://localhost:5009
+2026-10-26 00:34:01.553 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-26 00:34:01.557 -03:00 [INF] Hosting environment: Development
+2026-10-26 00:34:01.560 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
+2026-10-26 00:36:01.583 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:36:01.672 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 00:36:03.666 -03:00 [INF] API iniciada correctamente
+2026-10-26 00:36:04.193 -03:00 [INF] Now listening on: https://localhost:7078
+2026-10-26 00:36:04.196 -03:00 [INF] Now listening on: http://localhost:5009
+2026-10-26 00:36:04.295 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-26 00:36:04.300 -03:00 [INF] Hosting environment: Development
+2026-10-26 00:36:04.303 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
+2026-10-26 00:40:32.486 -03:00 [ERR] Error no controlado en GET /error-prueba
+System.Exception: Error de prueba
+   at Program.<>c.<<Main>$>b__0_8() in C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP\Program.cs:line 177
+   at lambda_method27(Closure, Object, HttpContext)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at MiApiTP.Middleware.ErrorHandlingMiddleware.InvokeAsync(HttpContext context) in C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP\Middleware\ErrorHandlingMiddleware.cs:line 19
+2026-10-26 00:40:32.587 -03:00 [INF] HTTP GET / respondió 301 en 2.4507 ms
+2026-10-26 00:40:32.587 -03:00 [INF] HTTP GET / respondió 301 en 2.4296 ms
+2026-10-26 00:40:32.670 -03:00 [ERR] HTTP GET /error-prueba respondió 500 en 237940.1356 ms
