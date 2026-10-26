@@ -65,3 +65,20 @@ System.Exception: Error de prueba
 2026-10-26 10:15:46.496 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
 2026-10-26 10:19:57.863 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
 2026-10-26 10:19:58.056 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 10:27:40.627 -03:00 [WRN] The foreign key property 'IngresoDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 10:27:40.777 -03:00 [WRN] The foreign key property 'SalidaDetalle.ProductoId1' was created in shadow state because a conflicting property with the simple name 'ProductoId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2026-10-26 10:27:43.506 -03:00 [INF] API iniciada correctamente
+2026-10-26 10:27:44.166 -03:00 [INF] Now listening on: https://localhost:7078
+2026-10-26 10:27:44.177 -03:00 [INF] Now listening on: http://localhost:5009
+2026-10-26 10:27:44.865 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-10-26 10:27:44.870 -03:00 [INF] Hosting environment: Development
+2026-10-26 10:27:44.874 -03:00 [INF] Content root path: C:\Users\Usuario\Desktop\TrabajoPractico5---Programaci-n-III\MiApiTP
+2026-10-26 10:27:56.066 -03:00 [INF] HTTP GET /index.html respondió 304 en 181.4633 ms
+2026-10-26 10:27:56.185 -03:00 [INF] HTTP GET /index.js respondió 304 en 2.1605 ms
+2026-10-26 10:27:56.234 -03:00 [INF] HTTP GET /index.css respondió 304 en 57.9539 ms
+2026-10-26 10:27:56.234 -03:00 [INF] HTTP GET /swagger-ui.css respondió 304 en 52.3488 ms
+2026-10-26 10:27:56.234 -03:00 [INF] HTTP GET /swagger-ui-standalone-preset.js respondió 304 en 17.4467 ms
+2026-10-26 10:27:56.246 -03:00 [INF] HTTP GET /swagger-ui-bundle.js respondió 304 en 25.0197 ms
+2026-10-26 10:27:57.044 -03:00 [INF] HTTP GET /swagger/v1/swagger.json respondió 200 en 112.0035 ms
+2026-10-26 10:29:03.366 -03:00 [INF] HTTP POST /api/Usuario/Login respondió 401 en 4024.6239 ms
+2026-10-26 10:30:17.711 -03:00 [INF] HTTP POST /api/Usuario/Login respondió 200 en 1176.9432 ms

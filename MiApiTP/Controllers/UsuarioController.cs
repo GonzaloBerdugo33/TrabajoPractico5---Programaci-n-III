@@ -13,11 +13,13 @@ namespace MiApiTP.Controllers
     {
         private readonly UsuarioService _service;
         private readonly JwtService _jwtService;
+        private readonly AuditoriaService _auditoria;
 
-        public UsuarioController(UsuarioService service, JwtService jwtService)
+        public UsuarioController(UsuarioService service, JwtService jwtService, AuditoriaService auditoria)
         {
             _service = service;
             _jwtService = jwtService;
+            _auditoria = auditoria;
         }
 
         [HttpGet]
@@ -58,8 +60,13 @@ namespace MiApiTP.Controllers
             var usuario = await _service.ValidarCredenciales(dto.Email, dto.Password);
             if(usuario == null) 
             {
+                await _auditoria.Registrar("LoginFallido", "Usuario", null,
+                    "Intento de inicio de sesión con credenciales inválidas", null, dto.Email);
                 return Unauthorized("Credenciales Invalidas");
             }
+
+            await _auditoria.Registrar("Login", "Usuario", usuario.Id,
+                "Inicio de sesión correcto", usuario.Id, usuario.Email);
 
             var token = _jwtService.GenerarToken(usuario);
             return Ok(new { token = token });
