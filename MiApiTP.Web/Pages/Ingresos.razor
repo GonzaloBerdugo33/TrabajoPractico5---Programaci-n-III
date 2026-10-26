@@ -6,7 +6,7 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<div class="d-flex justify-between align-center mb-4">
+<div class="d-flex justify-space-between align-center mb-4">
     <MudText Typo="Typo.h4">Historial de Ingresos de Mercadería</MudText>
     <MudButton Variant="Variant.Filled" 
                Color="Color.Primary" 
@@ -41,7 +41,6 @@
         <MudTh>Proveedor</MudTh>
         <MudTh>Registrado Por</MudTh>
         <MudTh>Total Unidades</MudTh>
-        <MudTh Style="text-align:right;">Acciones</MudTh>
     </HeaderContent>
     
     <RowTemplate>
@@ -50,13 +49,7 @@
         <MudTd DataLabel="Proveedor">@context.ProveedorRazonSocial</MudTd>
         <MudTd DataLabel="Registrado Por">@context.UsuarioEmail</MudTd>
         <MudTd DataLabel="Total Unidades">@context.TotalItems</MudTd>
-        <MudTd DataLabel="Acciones" Style="text-align:right;">
-            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
-                           Color="Color.Info" 
-                           Size="Size.Small" 
-                           Title="Ver Detalle" 
-                           OnClick="() => VerDetalle(context.Id)" />
-        </MudTd>
+        <MudTd DataLabel="Acciones" Style="text-align:right;"></MudTd>
     </RowTemplate>
     
     <PagerContent>

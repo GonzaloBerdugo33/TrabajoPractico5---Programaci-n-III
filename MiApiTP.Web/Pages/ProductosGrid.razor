@@ -15,6 +15,11 @@
                @bind="filtroBusqueda"
                @bind:event="oninput" />
     </div>
+
+    <AuthorizeView Roles="Administrador">
+        <a href="/Productos/Nuevo" class="btn btn-primary">+ Nuevo producto</a>
+    </AuthorizeView>
+
     <div class="col-md-3">
         <div class="input-group">
             <label class="input-group-text">Por pág.</label>
@@ -61,9 +66,6 @@ else
 
             <!-- Columna de Acciones -->
             <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Acciones" Context="prod" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Center">
-                <AuthorizeView Roles="Administrador">
-                    <a href="/subir-imagen" class="btn btn-sm btn-outline-primary">+ Img</a>
-                </AuthorizeView>
             </Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn>
         </Microsoft.AspNetCore.Components.QuickGrid.QuickGrid>
     </div>
@@ -101,7 +103,7 @@ else
     {
         try
         {
-            var lista = await Http.GetFromJsonAsync<List<ProductoDTO>>("api/Producto");
+            var lista = await Http.GetFromJsonAsync<List<ProductoDTO>>("api/Producto?pagina=1&tamanoPagina=1000");
             if (lista != null)
             {
                 productosQueryable = lista.AsQueryable();
@@ -109,7 +111,7 @@ else
         }
         catch (Exception)
         {
-            // Manejo de errores de red
+
         }
     }
 }

@@ -25,7 +25,7 @@ namespace MiApiTP.Web.Servicios
                 _logger.LogInformation("Obteniendo productos paginados. Página: {Pagina}, Tamaño: {Tamano}", pagina, tamanoPagina);
                 return await _http.GetFromJsonAsync<List<ProductoDTO>>($"api/Producto?pagina={pagina}&tamanoPagina={tamanoPagina}");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al obtener la lista paginada de productos.");
                 return null;

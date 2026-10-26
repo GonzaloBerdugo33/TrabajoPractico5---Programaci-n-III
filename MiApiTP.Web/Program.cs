@@ -26,7 +26,7 @@ builder.Services.AddMudServices(config =>
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .WriteTo.BrowserConsole() 
+    .WriteTo.BrowserConsole()
     .CreateLogger();
 
 builder.Logging.ClearProviders();

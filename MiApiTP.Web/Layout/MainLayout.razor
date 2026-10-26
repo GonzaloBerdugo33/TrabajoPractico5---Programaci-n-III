@@ -1,4 +1,5 @@
-﻿@using MiApiTP.Web.Services
+﻿@using System.Security.Claims
+@using MiApiTP.Web.Services
 @using MiApiTP.Web.Servicios.Interfaces
 @inherits LayoutComponentBase
 @inject IAuthService AuthService
@@ -9,122 +10,157 @@
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+
 <MudLayout>
-<!-- Barra Superior (AppBar) -->
-<MudAppBar Elevation="2" Color="Color.Primary" Dense="false">
-<MudIconButton Icon="@Icons.Material.Filled.Menu"
-Color="Color.Inherit"
-Edge="Edge.Start"
-OnClick="@ToggleDrawer" />
-<MudText Typo="Typo.h6" Class="ml-3">Tienda .NET 10</MudText>
-<MudSpacer />
-<!-- Alternador de Tema Claro / Oscuro -->
-<MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode :
-Icons.Material.Filled.DarkMode)"
-Color="Color.Inherit"
-OnClick="@(() => _isDarkMode = !_isDarkMode)"
-Title="@(_isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro")" />
-<!-- Estado de Sesión del Usuario -->
-<AuthorizeView>
-<Authorized>
-<MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Secondary"
-Class="mr-2">
-@context.User.Identity?.Name
-</MudChip>
-<MudIconButton Icon="@Icons.Material.Filled.Logout"
-Color="Color.Inherit"
-OnClick="CerrarSesion"
-Title="Cerrar Sesión" />
-</Authorized>
-<NotAuthorized>
-<MudButton Variant="Variant.Text"
-Color="Color.Inherit"
-StartIcon="@Icons.Material.Filled.Login"
-Href="/Login">
-Ingresar
-</MudButton>
-</NotAuthorized>
-</AuthorizeView>
-</MudAppBar>
-<!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
-<!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
-<MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="3"
-          Variant="DrawerVariant.Responsive">
-    <MudDrawerHeader>
-        <MudText Typo="Typo.subtitle1" Class="font-weight-bold" Color="Color.Primary">
-            Panel Principal
-        </MudText>
-    </MudDrawerHeader>
-    <MudNavMenu>
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-            Inicio
-        </MudNavLink>
+    <!-- Barra Superior (AppBar) -->
+    <MudAppBar Elevation="2" Color="Color.Primary" Dense="false">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="@ToggleDrawer" />
+        <MudText Typo="Typo.h6" Class="ml-3">CHANGO MENOS</MudText>
+        <MudSpacer />
 
-        <MudNavGroup Title="Catálogo" Icon="@Icons.Material.Filled.Storefront" Expanded="true">
-            <MudNavLink Href="/Producto" Icon="@Icons.Material.Filled.ShoppingBag">
-                Productos (Tarjetas)
-            </MudNavLink>
-            <MudNavLink Href="/productos-grid" Icon="@Icons.Material.Filled.TableRows">
-                Productos (QuickGrid)
-            </MudNavLink>
-        </MudNavGroup>
+        <!-- Alternador de Tema Claro / Oscuro -->
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)"
+                       Color="Color.Inherit"
+                       OnClick="@(() => _isDarkMode = !_isDarkMode)"
+                       Title="@(_isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro")" />
 
-        <!-- Menú exclusivo para Administradores -->
-        <AuthorizeView Roles="Administrador">
+        <!-- Estado de Sesión del Usuario -->
+        <AuthorizeView>
             <Authorized>
-               <MudNavGroup Title="Categorias" Icon="@Icons.Material.Filled.Category" Expanded="false">
-                    <MudNavLink Href="/Categoria" Icon="@Icons.Material.Filled.ListAlt">
-                        Gestion de Categorias
-                    </MudNavLink>
-                </MudNavGroup>
-
-                <MudNavGroup Title="Inventario" Icon="@Icons.Material.Filled.Inventory" Expanded="true">
-                    <MudNavLink Href="/Ingreso" Icon="@Icons.Material.Filled.ListAlt">
-                        Historial de Ingresos
-                    </MudNavLink>
-                    <MudNavLink Href="/Ingreso/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
-                        Nuevo Ingreso
-                    </MudNavLink>
-                    <MudNavLink Href="/Salida" Icon="@Icons.Material.Filled.ListAlt">
-                        Historial de Salidas
-                    </MudNavLink>
-                    <MudNavLink Href="/Salida/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
-                        Nueva Salida
-                    </MudNavLink>
-                </MudNavGroup>
-
-                <MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="false">
-                    <MudNavLink Href="/usuarios-grid" Icon="@Icons.Material.Filled.People">
-                        Gestión Usuarios
-                    </MudNavLink>
-                    <MudNavLink Href="/subir-imagen" Icon="@Icons.Material.Filled.CloudUpload">
-                        Subir Imágenes
-                    </MudNavLink>
-                    <MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">
-                        Reportes PDF
-                    </MudNavLink>
-                </MudNavGroup>
+                <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Secondary" Class="mr-2">
+                    @ObtenerEmail(context.User)
+                </MudChip>
+                <MudIconButton Icon="@Icons.Material.Filled.Logout"
+                               Color="Color.Inherit"
+                               OnClick="CerrarSesion"
+                               Title="Cerrar Sesión" />
             </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Inherit"
+                           StartIcon="@Icons.Material.Filled.Login"
+                           Href="/Login">
+                    Ingresar
+                </MudButton>
+            </NotAuthorized>
         </AuthorizeView>
+    </MudAppBar>
 
-        <MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
-            Acerca de
-        </MudNavLink>
-    </MudNavMenu>
-</MudDrawer><!-- Contenedor Principal de la Página -->
-<MudMainContent Class="pa-6">
-@Body
-</MudMainContent>
+    <!-- Barra Lateral de Navegación (Sidebar / Drawer) -->
+    <MudDrawer @bind-Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="3"
+               Variant="DrawerVariant.Responsive">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.subtitle1" Class="font-weight-bold" Color="Color.Primary">
+                Panel Principal
+            </MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+                Inicio
+            </MudNavLink>
+
+            <!-- Catálogo: público. El alta de producto solo la ve el administrador -->
+            <MudNavGroup Title="Catálogo" Icon="@Icons.Material.Filled.Storefront" Expanded="true">
+                <MudNavLink Href="/Productos-grid" Icon="@Icons.Material.Filled.TableRows">
+                    Productos
+                </MudNavLink>
+                <AuthorizeView Roles="Administrador">
+                    <MudNavLink Href="/Productos/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                        Nuevo Producto
+                    </MudNavLink>
+                </AuthorizeView>
+            </MudNavGroup>
+
+            <!-- Menú exclusivo para Administradores -->
+            <AuthorizeView Roles="Administrador">
+                <Authorized>
+                    <MudNavGroup Title="Categorías" Icon="@Icons.Material.Filled.Category" Expanded="false">
+                        <MudNavLink Href="/Categoria" Icon="@Icons.Material.Filled.ListAlt">
+                            Gestión de Categorías
+                        </MudNavLink>
+                    </MudNavGroup>
+
+                    <MudNavGroup Title="Inventario" Icon="@Icons.Material.Filled.Inventory" Expanded="true">
+                        <MudNavLink Href="/Ingreso" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ListAlt">
+                            Historial de Ingresos
+                        </MudNavLink>
+                        <MudNavLink Href="/Ingreso/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                            Nuevo Ingreso
+                        </MudNavLink>
+                        <MudNavLink Href="/Salida" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ListAlt">
+                            Historial de Ventas
+                        </MudNavLink>
+                        <MudNavLink Href="/Salida/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                            Nueva Venta
+                        </MudNavLink>
+                    </MudNavGroup>
+
+                    <MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="false">
+                        <MudNavLink Href="/Register" Icon="@Icons.Material.Filled.PersonAdd">
+                            Crear Usuario
+                        </MudNavLink>
+
+                        <MudNavGroup Title="Gestión Proveedores" Icon="@Icons.Material.Filled.People" Expanded="false">
+                            <MudNavLink Href="/Proveedores" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">
+                                Lista Proveedores
+                            </MudNavLink>
+                            <MudNavLink Href="/Proveedores/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                                Nuevo Proveedor
+                            </MudNavLink>
+                        </MudNavGroup>
+
+                        <MudNavGroup Title="Gestión Clientes" Icon="@Icons.Material.Filled.People" Expanded="false">
+                            <MudNavLink Href="/Clientes" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">
+                                Lista Clientes
+                            </MudNavLink>
+                            <MudNavLink Href="/Clientes/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                                Nuevo Cliente
+                            </MudNavLink>
+                        </MudNavGroup>
+
+                        @* La página /reportes se crea con los PDF; hasta entonces este link no abre nada *@
+                        <MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">
+                            Reportes PDF
+                        </MudNavLink>
+                    </MudNavGroup>
+                </Authorized>
+            </AuthorizeView>
+
+            <MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
+                Acerca de
+            </MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <!-- Contenedor Principal de la Página -->
+    <MudMainContent Class="pa-6">
+        @Body
+    </MudMainContent>
 </MudLayout>
+
 @code {
-private bool _drawerOpen = true;
-private bool _isDarkMode = false;
-private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
-private async Task CerrarSesion()
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = false;
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private async Task CerrarSesion()
     {
         await AuthService.LogoutAsync();
         Nav.NavigateTo("/Login");
     }
+
+    // El token trae el email pero no el nombre, por eso Identity.Name llegaba vacío.
+    // Según cómo se lean los claims, el tipo puede ser "email" o ClaimTypes.Email.
+    private static string ObtenerEmail(ClaimsPrincipal user)
+    {
+        var claim = user.Claims.FirstOrDefault(c => c.Type == "email" || c.Type == ClaimTypes.Email);
+        return claim?.Value ?? user.Identity?.Name ?? "Usuario";
+    }
+
     // Configuración de Paleta de Colores de la Marca
     private readonly MudTheme _miTemaPersonalizado = new()
     {

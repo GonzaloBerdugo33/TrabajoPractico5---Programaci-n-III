@@ -1,0 +1,110 @@
+﻿@page "/Clientes/Nuevo"
+@using MiApiTP.Web.DTOs
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-8">
+    <MudCard Elevation="4" Class="pa-6">
+        <MudText Typo="Typo.h5" Class="mb-4">👥 Registrar Nuevo Cliente / Datos Fiscales</MudText>
+
+        <EditForm Model="@nuevoCliente" OnValidSubmit="GuardarCliente">
+            <DataAnnotationsValidator />
+
+            <MudGrid>
+
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="nuevoCliente.Nombre"
+                                  Label="Nombre Completo"
+                                  Variant="Variant.Outlined"
+                                  For="@(() => nuevoCliente.Nombre)"
+                                  Required="true" />
+                </MudItem>
+
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="nuevoCliente.DNI"
+                                  Label="DNI"
+                                  Variant="Variant.Outlined"
+                                  For="@(() => nuevoCliente.DNI)"
+                                  Required="true" />
+                </MudItem>
+
+
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="nuevoCliente.Telefono"
+                                  Label="Número de Teléfono"
+                                  Variant="Variant.Outlined"
+                                  For="@(() => nuevoCliente.Telefono)" />
+                </MudItem>
+
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="nuevoCliente.Email"
+                                  Label="Correo Electrónico"
+                                  Variant="Variant.Outlined"
+                                  InputType="InputType.Email"
+                                  For="@(() => nuevoCliente.Email)" />
+                </MudItem>
+            </MudGrid>
+
+            @* Botones de Acción inferior *@
+            <div class="d-flex justify-between mt-6">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Volver">
+                    Cancelar
+                </MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="@guardando">
+                    @if (guardando)
+                    {
+                        <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        <span>Guardar Cliente</span>
+                    }
+                </MudButton>
+            </div>
+        </EditForm>
+    </MudCard>
+</MudContainer>
+
+@code {
+    private CrearClienteDTO nuevoCliente = new();
+    private bool guardando = false;
+
+    private async Task GuardarCliente()
+    {
+        if (string.IsNullOrWhiteSpace(nuevoCliente.Nombre) || string.IsNullOrWhiteSpace(nuevoCliente.DNI))
+        {
+            Snackbar.Add("El nombre y el DNI son campos obligatorios.", Severity.Warning);
+            return;
+        }
+
+        guardando = true;
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/Cliente", nuevoCliente);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("¡Cliente registrado con éxito en el sistema!", Severity.Success);
+                Navigation.NavigateTo("/Clientes");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Snackbar.Add($"Error de validación en el servidor: {error}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error crítico de red: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+
+    private void Volver() => Navigation.NavigateTo("/Clientes");
+}

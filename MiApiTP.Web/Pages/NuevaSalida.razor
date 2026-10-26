@@ -5,8 +5,9 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IDialogService Dialogs
 
-<MudText Typo="Typo.h4" Class="mb-4">Registrar Nueva Salida de Mercadería</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">Registrar Nueva Venta</MudText>
 
 <MudGrid>
     <!-- Selección de Cliente -->
@@ -18,17 +19,26 @@
             }
             else
             {
-                @foreach (var cli in clientes)
+                @foreach (var c in clientes)
                 {
-                    <MudSelectItem Value="@cli.Id">@cli.Nombre</MudSelectItem>
+                    <MudSelectItem Value="@c.Id">@c.Nombre</MudSelectItem>
                 }
             }
+        </MudSelect>
+    </MudItem>
+
+    <!-- Método de pago (dentro de su propio MudItem, antes estaba suelto en el grid) -->
+    <MudItem xs="12" md="6">
+        <MudSelect T="string" Label="Método de pago" @bind-Value="salidaDto.MetodoPago" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            <MudSelectItem T="string" Value="@("Efectivo")">Efectivo</MudSelectItem>
+            <MudSelectItem T="string" Value="@("Tarjeta")">Tarjeta</MudSelectItem>
+            <MudSelectItem T="string" Value="@("Transferencia")">Transferencia</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>
 
 <MudDivider Class="my-4" />
-<MudText Typo="Typo.h6" Class="mb-2">Agregar Productos a la Salida</MudText>
+<MudText Typo="Typo.h6" Class="mb-2">Productos de la venta</MudText>
 
 <!-- Formulario temporal para agregar detalles -->
 <MudGrid AlignItems="Center">
@@ -42,7 +52,9 @@
             {
                 @foreach (var prod in productos)
                 {
-                    <MudSelectItem Value="@prod.Id">@prod.Nombre</MudSelectItem>
+                    <MudSelectItem Value="@prod.Id" Disabled="@(prod.Stock == 0)">
+                        @prod.Nombre - @Dinero(prod.Precio) (stock: @prod.Stock)
+                    </MudSelectItem>
                 }
             }
         </MudSelect>
@@ -58,28 +70,32 @@
 <!-- Tabla de Detalles Agregados -->
 <MudTable Items="salidaDto.Detalles" Class="mt-4" Hover="true" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
-        <MudTh>Producto ID</MudTh>
         <MudTh>Producto</MudTh>
         <MudTh>Cantidad</MudTh>
+        <MudTh>Precio</MudTh>
+        <MudTh>Subtotal</MudTh>
         <MudTh Style="text-align:right;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Producto ID">@context.ProductoId</MudTd>
         <MudTd DataLabel="Producto">@ObtenerNombreProducto(context.ProductoId)</MudTd>
         <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
+        <MudTd DataLabel="Precio">@Dinero(ObtenerPrecio(context.ProductoId))</MudTd>
+        <MudTd DataLabel="Subtotal">@Dinero(ObtenerPrecio(context.ProductoId) * context.Cantidad)</MudTd>
         <MudTd DataLabel="Acciones" Style="text-align:right;">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => RemoverDetalle(context)" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>
-        <MudText>No hay productos agregados a esta salida todavía.</MudText>
+        <MudText>No hay productos agregados a esta venta todavía.</MudText>
     </NoRecordsContent>
 </MudTable>
 
+<MudText Typo="Typo.h5" Class="mt-4" Align="MudBlazor.Align.Right">Total: @Dinero(Total)</MudText>
+
 <!-- Botón Guardar Final -->
 <div class="d-flex justify-end mt-6">
-    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" OnClick="GuardarSalida">
-        Registrar Salida en el Sistema
+    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" Disabled="@guardando" OnClick="GuardarSalida">
+        @(guardando ? "Registrando..." : "Confirmar venta")
     </MudButton>
 </div>
 
@@ -90,6 +106,13 @@
 
     private int productoSeleccionadoId;
     private int cantidadSeleccionada = 1;
+    private bool guardando = false;
+
+    // Lo que devuelve la API al crear la venta: { "id": 12 }
+    private record SalidaCreada(int Id);
+
+    // Total de la venta: suma de precio x cantidad de cada línea
+    private decimal Total => salidaDto.Detalles.Sum(d => ObtenerPrecio(d.ProductoId) * d.Cantidad);
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,13 +132,38 @@
         }
     }
 
-   private string ObtenerNombreProducto(int productoId) =>
-        productos?.FirstOrDefault(p => p.Id == productoId)?.Nombre ?? "Desconocido";
+    private static string Dinero(decimal valor) => $"$ {valor:N2}";
 
+    private string ObtenerNombreProducto(int productoId)
+    {
+        if (productos == null)
+        {
+            return "Desconocido";
+        }
+
+        var prodEncontrado = productos.FirstOrDefault(p => p.Id == productoId);
+
+        if (prodEncontrado != null)
+        {
+            return prodEncontrado.Nombre;
+        }
+        else
+        {
+            return "Desconocido";
+        }
+    }
+
+    private decimal ObtenerPrecio(int productoId)
+    {
+        var prod = productos?.FirstOrDefault(p => p.Id == productoId);
+        return prod?.Precio ?? 0;
+    }
 
     private void AgregarDetalle()
     {
-        if (productoSeleccionadoId == 0)
+        var prod = productos?.FirstOrDefault(p => p.Id == productoSeleccionadoId);
+
+        if (prod == null)
         {
             Snackbar.Add("Debe seleccionar un producto válido.", Severity.Warning);
             return;
@@ -127,16 +175,25 @@
             return;
         }
 
-        var existente = salidaDto.Detalles.FirstOrDefault(d => d.ProductoId == productoSeleccionadoId);
+        var existente = salidaDto.Detalles.FirstOrDefault(d => d.ProductoId == prod.Id);
+        var cantidadTotal = (existente?.Cantidad ?? 0) + cantidadSeleccionada;
+
+        // Para no vender más de lo que hay (la API también lo valida)
+        if (cantidadTotal > prod.Stock)
+        {
+            Snackbar.Add($"Solo quedan {prod.Stock} unidades de {prod.Nombre}.", Severity.Warning);
+            return;
+        }
+
         if (existente != null)
         {
-            existente.Cantidad += cantidadSeleccionada;
+            existente.Cantidad = cantidadTotal;
         }
         else
         {
             salidaDto.Detalles.Add(new CrearSalidaDetalleDTO
             {
-                ProductoId = productoSeleccionadoId,
+                ProductoId = prod.Id,
                 Cantidad = cantidadSeleccionada
             });
         }
@@ -160,28 +217,48 @@
 
         if (!salidaDto.Detalles.Any())
         {
-            Snackbar.Add("La salida debe contener al menos un producto.", Severity.Error);
+            Snackbar.Add("La venta debe contener al menos un producto.", Severity.Error);
             return;
         }
+
+        guardando = true;
 
         try
         {
             var response = await Http.PostAsJsonAsync("api/Salida", salidaDto);
 
-            if (response.IsSuccessStatusCode)
-            {
-                Snackbar.Add("¡Salida registrado con éxito y stock actualizado!", Severity.Success);
-                Navigation.NavigateTo("/Salida");
-            }
-            else
+            if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 Snackbar.Add($"Error al registrar: {errorContent}", Severity.Error);
+                return;
             }
+
+            // 1) La API devuelve el Id de la venta recién creada
+            var creada = await response.Content.ReadFromJsonAsync<SalidaCreada>();
+
+            // 2) Con ese Id pedimos el detalle completo (cliente, usuario, productos con precio)
+            var salida = await Http.GetFromJsonAsync<SalidaDTO>($"api/Salida/{creada!.Id}");
+
+            // 3) Mostramos el ticket y esperamos a que el cajero lo cierre
+            if (salida != null)
+            {
+                var dialogo = await Dialogs.ShowAsync<TicketDialog>("Venta registrada",
+                    new DialogParameters { ["Salida"] = salida },
+                    new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+
+                await dialogo.Result;
+            }
+
+            Navigation.NavigateTo("/Salida");
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            guardando = false;
         }
     }
 }

@@ -5,8 +5,9 @@
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IDialogService Dialogs
 
-<div class="d-flex justify-between align-center mb-4">
+<div class="d-flex justify-space-between align-center mb-4">
     <MudText Typo="Typo.h4">Gestión de Salidas de Mercadería</MudText>
     <MudButton Variant="Variant.Filled" 
                Color="Color.Primary" 
@@ -51,11 +52,13 @@
         <MudTd DataLabel="Registrado Por">@context.UsuarioEmail</MudTd>
         <MudTd DataLabel="Total Unidades">@context.TotalItems</MudTd>
         <MudTd DataLabel="Acciones" Style="text-align:right;">
-            <MudIconButton Icon="@Icons.Material.Filled.Visibility" 
-                           Color="Color.Info" 
-                           Size="Size.Small" 
-                           Title="Ver Detalle" 
-                           OnClick="() => VerDetalle(context.Id)" />
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Size="Size.Small"
+                       StartIcon="@Icons.Material.Filled.Print"
+                       OnClick="() => VerDetalle(context.Id)">
+                Ticket
+            </MudButton>
         </MudTd>
     </RowTemplate>
     
@@ -109,8 +112,20 @@
         Navigation.NavigateTo("/Salida/Nuevo");
     }
 
-    private void VerDetalle(int id)
+    private async Task VerDetalle(int id)
     {
-        Snackbar.Add($"Próximamente: Detalle de la salida #{id}", Severity.Info);
+        try
+        {
+            var salida = await Http.GetFromJsonAsync<SalidaDTO>($"api/Salida/{id}");
+            if (salida == null) return;
+
+            await Dialogs.ShowAsync<TicketDialog>("Ticket",
+                new DialogParameters { ["Salida"] = salida },
+                new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"No se pudo cargar el ticket: {ex.Message}", Severity.Error);
+        }
     }
 }

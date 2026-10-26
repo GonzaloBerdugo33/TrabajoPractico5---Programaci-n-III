@@ -113,3 +113,41 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+#ticket {
+    font-family: monospace;
+    font-size: 13px;
+}
+
+    #ticket table {
+        width: 100%;
+    }
+
+    #ticket .right {
+        text-align: right;
+    }
+
+.ticket-center {
+    text-align: center;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #ticket, #ticket * {
+        visibility: visible;
+    }
+
+    #ticket {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+    }
+
+    @page {
+        margin: 5mm;
+    }
+}

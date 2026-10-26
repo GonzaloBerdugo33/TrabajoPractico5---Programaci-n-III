@@ -11,8 +11,8 @@
     <MudCard Elevation="4" Class="pa-4">
         <MudCardContent>
             <div class="text-center mb-4">
-                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center" GutterBottom="true">Crear Cuenta</MudText>
-                <MudText Typo="Typo.body2" Color="Color.Secondary">Completa los datos para registrarte</MudText>
+                <MudText Typo="Typo.h4" Align="MudBlazor.Align.Center" GutterBottom="true">Crear Usuario</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Secondary">Completa los datos del nuevo Usuario</MudText>
             </div>
 
             @if (!string.IsNullOrEmpty(mensajeError))
@@ -48,6 +48,11 @@
                               InputType="InputType.Password"
                               Required="true" />
 
+                <MudSelect T="string" @bind-Value="dto.Rol" Label="Rol" Variant="Variant.Outlined" Class="mb-4">
+                    <MudSelectItem T="string" Value="@("Administrador")">Administrador</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("Cliente")">Cliente</MudSelectItem>
+                </MudSelect>
+
                 <MudButton ButtonType="ButtonType.Submit"
                            Variant="Variant.Filled"
                            Color="Color.Primary"
@@ -66,11 +71,6 @@
                 </MudButton>
             </EditForm>
 
-            <div class="text-center mt-4">
-                <MudText Typo="Typo.body2">
-                    ¿Ya tienes una cuenta? <MudLink Href="/Login">Inicia sesión aquí</MudLink>
-                </MudText>
-            </div>
         </MudCardContent>
     </MudCard>
 </MudContainer>
@@ -80,7 +80,8 @@
     {
         Nombre = string.Empty,
         Email = string.Empty,
-        Password = string.Empty
+        Password = string.Empty,
+        Rol = "Administrador"
     };
 
     private string? mensajeError;
@@ -93,12 +94,12 @@
 
         try
         {
-            // Asegúrate de que la ruta coincida con la de tu controlador de backend
             var response = await Http.PostAsJsonAsync("api/Usuario/Register", dto);
 
             if (response.IsSuccessStatusCode)
             {
-                Navigation.NavigateTo("/Login");
+                Snackbar.Add("Usuario creado con éxito", Severity.Success);
+                dto = new() { Rol = "Administrador" };
             }
             else
             {

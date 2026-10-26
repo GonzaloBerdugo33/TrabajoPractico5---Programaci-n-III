@@ -1,0 +1,67 @@
+﻿@using MiApiTP.Web.DTOs
+@inject IJSRuntime JS
+
+<MudDialog>
+    <DialogContent>
+
+        <div id="ticket">
+            <div class="ticket-center"><b>CHANGO MENOS</b></div>
+            <div class="ticket-center">Ticket N° @Salida.Id.ToString("D6")</div>
+            <hr />
+            <div>Fecha: @Salida.Fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+            <div>Cliente: @Salida.ClienteNombre</div>
+            <div>Atendió: @Salida.UsuarioEmail</div>
+            <div>Pago: @Salida.MetodoPago</div>
+            <hr />
+
+            <table>
+                <thead>
+                    <tr>
+                        <th align="left">Producto</th>
+                        <th>Cant</th>
+                        <th class="right">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Salida.DetallesProductos)
+                    {
+                        <tr>
+                            <td>@d.NombreProducto<br /><small>@Dinero(d.PrecioUnitario) c/u</small></td>
+                            <td align="center">@d.Cantidad</td>
+                            <td class="right">@Dinero(d.Cantidad * d.PrecioUnitario)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <hr />
+            <div class="right"><b>TOTAL: @Dinero(Total)</b></div>
+            <hr />
+            <div class="ticket-center">¡Gracias por su compra!</div>
+        </div>
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton StartIcon="@Icons.Material.Filled.Print" Color="Color.Primary" OnClick="Imprimir">Imprimir</MudButton>
+        <MudButton OnClick="Cerrar">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    // MudBlazor nos da esta referencia para poder cerrar el diálogo
+    [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
+
+    // La venta que se muestra; quien abre el diálogo se la pasa
+    [Parameter] public SalidaDTO Salida { get; set; } = default!;
+
+    // Total = suma de (cantidad x precio unitario) de cada línea
+    private decimal Total => Salida.DetallesProductos.Sum(d => d.Cantidad * d.PrecioUnitario);
+
+    private static string Dinero(decimal valor) => $"$ {valor:N2}";
+
+    // Llama a window.print() del navegador (JavaScript)
+    private async Task Imprimir() => await JS.InvokeVoidAsync("window.print");
+
+    private void Cerrar() => MudDialog.Close();
+}

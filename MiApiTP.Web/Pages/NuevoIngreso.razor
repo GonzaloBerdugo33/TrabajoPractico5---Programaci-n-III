@@ -58,12 +58,12 @@
 <!-- Tabla de Detalles Agregados -->
 <MudTable Items="ingresoDto.Detalles" Class="mt-4" Hover="true" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
-        <MudTh>Producto ID</MudTh>
+        <MudTh>Producto</MudTh>
         <MudTh>Cantidad</MudTh>
         <MudTh Style="text-align:right;">Acciones</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Producto ID">@context.ProductoId</MudTd>
+        <MudTd DataLabel="Producto">@ObtenerNombreProducto(context.ProductoId)</MudTd>
         <MudTd DataLabel="Cantidad">@context.Cantidad</MudTd>
         <MudTd DataLabel="Acciones" Style="text-align:right;">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" OnClick="() => RemoverDetalle(context)" />
@@ -74,9 +74,8 @@
     </NoRecordsContent>
 </MudTable>
 
-<!-- Botón Guardar Final -->
 <div class="d-flex justify-end mt-6">
-    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" OnClick="GuardarIngreso">
+    <MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" Disabled="@guardando" OnClick="GuardarIngreso">
         Registrar Ingreso en el Sistema
     </MudButton>
 </div>
@@ -88,6 +87,7 @@
 
     private int productoSeleccionadoId;
     private int cantidadSeleccionada = 1;
+    private bool guardando = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,6 +104,25 @@
         catch (Exception ex)
         {
             Snackbar.Add($"Error al cargar catálogos: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string ObtenerNombreProducto(int productoId)
+    {
+        if (productos == null)
+        {
+            return "Desconocido";
+        }   
+
+        var prodEncontrado = productos.FirstOrDefault(p => p.Id == productoId);
+
+        if (prodEncontrado != null)
+        {
+            return prodEncontrado.Nombre;
+        }
+        else
+        {
+            return "Desconocido";
         }
     }
 
@@ -158,6 +177,8 @@
             return;
         }
 
+        guardando = true;
+
         try
         {
             var response = await Http.PostAsJsonAsync("api/Ingreso", ingresoDto);
@@ -177,5 +198,9 @@
         {
             Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
         }
-    }
+        finally                        // <- nuevo
+        {
+            guardando = false;
+        }
+     }
 }
