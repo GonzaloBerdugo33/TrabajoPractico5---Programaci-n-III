@@ -13,10 +13,12 @@ namespace MiApiTP.Controllers
     public class SalidaController : ControllerBase
     {
         private readonly SalidaService _service;
+        private readonly AuditoriaService _auditoria;
 
-        public SalidaController(SalidaService service)
+        public SalidaController(SalidaService service, AuditoriaService auditoria)
         {
             _service = service;
+            _auditoria = auditoria;
         }
 
         [HttpGet]
@@ -50,6 +52,16 @@ namespace MiApiTP.Controllers
                 int usuarioIdLogueado = int.Parse(usuarioIdClaim);
 
                 var id = await _service.RegistrarSalidaAsync(dto, usuarioIdLogueado);
+
+                var email = User.FindFirst(ClaimTypes.Email)?.Value
+                         ?? User.FindFirst("email")?.Value
+                         ?? "";
+                var items = dto.Detalles.Sum(d => d.Cantidad);
+
+                await _auditoria.Registrar("Venta", "Salida", id,
+                    $"Venta a cliente {dto.ClienteId}, pago {dto.MetodoPago}, {items} unidades",
+                    usuarioIdLogueado, email);
+
                 return Ok(new { id });
             }
             catch (Exception ex)

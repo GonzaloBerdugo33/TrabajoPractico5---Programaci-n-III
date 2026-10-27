@@ -13,10 +13,12 @@ namespace MiApiTP.Controllers
     public class IngresoController : ControllerBase
     {
         private readonly IngresoService _service;
+        private readonly AuditoriaService _auditoria;
 
-        public IngresoController(IngresoService service) 
+        public IngresoController(IngresoService service, AuditoriaService auditoria) 
         {
             _service = service;
+            _auditoria = auditoria;
         }
 
         [HttpGet]
@@ -49,7 +51,16 @@ namespace MiApiTP.Controllers
 
                 int usuarioIdLogueado = int.Parse(usuarioIdClaim);
 
-                await _service.RegistrarIngresoAsync(dto, usuarioIdLogueado);
+                var id = await _service.RegistrarIngresoAsync(dto, usuarioIdLogueado);
+
+                var email = User.FindFirst(ClaimTypes.Email)?.Value
+                         ?? User.FindFirst("email")?.Value
+                         ?? "";
+                var unidades = dto.Detalles.Sum(d => d.Cantidad);
+
+                await _auditoria.Registrar("Ingreso", "Ingreso", id,
+                    $"Ingreso de proveedor {dto.ProveedorId}, {unidades} unidades",
+                    usuarioIdLogueado, email);
 
                 return Ok(new { mensaje = "Ingreso registrado con éxito" });
             }

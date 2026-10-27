@@ -1,0 +1,64 @@
+﻿@page "/Auditoria"
+@using Microsoft.AspNetCore.Authorization
+@using MiApiTP.Web.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Auditoría del Sistema</MudText>
+
+<MudTable T="AuditoriaDTO"
+          ServerData="CargarPagina"
+          Hover="true"
+          Breakpoint="Breakpoint.Sm">
+
+    <HeaderContent>
+        <MudTh>Fecha</MudTh>
+        <MudTh>Usuario</MudTh>
+        <MudTh>Acción</MudTh>
+        <MudTh>Entidad</MudTh>
+        <MudTh>Id</MudTh>
+        <MudTh>Detalle</MudTh>
+        <MudTh>IP</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Fecha">@context.Fecha.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</MudTd>
+        <MudTd DataLabel="Usuario">@context.UsuarioEmail</MudTd>
+        <MudTd DataLabel="Acción">@context.Accion</MudTd>
+        <MudTd DataLabel="Entidad">@context.Entidad</MudTd>
+        <MudTd DataLabel="Id">@context.EntidadId</MudTd>
+        <MudTd DataLabel="Detalle">@context.Detalle</MudTd>
+        <MudTd DataLabel="IP">@context.Ip</MudTd>
+    </RowTemplate>
+
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 20, 50 }" />
+    </PagerContent>
+
+    <NoRecordsContent>
+        <MudText>No hay registros de auditoría.</MudText>
+    </NoRecordsContent>
+</MudTable>
+
+@code {
+    private async Task<TableData<AuditoriaDTO>> CargarPagina(TableState state, CancellationToken token)
+    {
+        try
+        {
+            var url = $"api/Auditoria?pagina={state.Page + 1}&tamanoPagina={state.PageSize}";
+            var respuesta = await Http.GetFromJsonAsync<AuditoriaPaginadaDTO>(url, token);
+
+            return new TableData<AuditoriaDTO>
+            {
+                Items = respuesta?.Items ?? new List<AuditoriaDTO>(),
+                TotalItems = respuesta?.Total ?? 0
+            };
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar la auditoría: {ex.Message}", Severity.Error);
+            return new TableData<AuditoriaDTO> { Items = new List<AuditoriaDTO>(), TotalItems = 0 };
+        }
+    }
+}

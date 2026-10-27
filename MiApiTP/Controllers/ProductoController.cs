@@ -4,6 +4,7 @@ using MiApiTP.Servicios;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace MiApiTP.Controllers
 {
@@ -12,10 +13,12 @@ namespace MiApiTP.Controllers
     public class ProductoController : ControllerBase
     {
         private readonly ProductoService _service;
+        private readonly AuditoriaService _auditoria;
 
-        public ProductoController(ProductoService service)
+        public ProductoController(ProductoService service, AuditoriaService auditoria)
         {
             _service = service;
+            _auditoria = auditoria;
         }
 
         [HttpGet]
@@ -62,6 +65,8 @@ namespace MiApiTP.Controllers
             var productoDto = new ProductoDTO
             {
                 Id = producto.Id,
+                CategoriaId = producto.CategoriaId,
+                ProveedorId = producto.ProveedorId,
                 Nombre = producto.Nombre,
                 Precio = producto.Precio,
                 Stock = producto.Stock,
@@ -87,7 +92,15 @@ namespace MiApiTP.Controllers
                 ProveedorId = dto.ProveedorId,
             };
             await _service.CrearProducto(producto);
-            
+
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+            int? usuarioId = int.TryParse(idClaim, out var n) ? n : null;
+
+            await _auditoria.Registrar("AltaProducto", "Producto", producto.Id,
+                $"Alta de producto '{producto.Nombre}', precio {producto.Precio}, stock {producto.Stock}",
+                usuarioId, email);
+
             var productoDto = new ProductoDTO
             {
                 Id = producto.Id,
@@ -131,8 +144,17 @@ namespace MiApiTP.Controllers
                 CategoriaId = dto.CategoriaId,
                 ProveedorId = dto.ProveedorId
             };
-            
+
             await _service.ActualizarProducto(producto);
+
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+            int? usuarioId = int.TryParse(idClaim, out var n) ? n : null;
+
+            await _auditoria.Registrar("EdicionProducto", "Producto", id,
+                $"Edición de producto '{producto.Nombre}', precio {producto.Precio}, stock {producto.Stock}",
+                usuarioId, email);
+
             return NoContent();
         }
 
@@ -143,6 +165,15 @@ namespace MiApiTP.Controllers
             try
             {
                 await _service.EliminarProducto(id);
+
+                var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var email = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+                int? usuarioId = int.TryParse(idClaim, out var n) ? n : null;
+
+                await _auditoria.Registrar("BajaProducto", "Producto", id,
+                    $"Baja de producto con id {id}",
+                    usuarioId, email);
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -151,4 +182,5 @@ namespace MiApiTP.Controllers
             }
         }
     }
+
 }
