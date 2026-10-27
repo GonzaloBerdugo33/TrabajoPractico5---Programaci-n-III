@@ -9,11 +9,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
+using QuestPDF.Infrastructure;
 
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +72,7 @@ builder.Services.AddScoped<SalidaService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuditoriaService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 
 builder.Services.AddAuthentication(options =>
 {
