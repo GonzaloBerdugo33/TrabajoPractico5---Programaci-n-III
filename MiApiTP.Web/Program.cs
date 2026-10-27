@@ -39,7 +39,7 @@ builder.Services.AddTransient<JwtInterceptorHandler>();
 
 builder.Services.AddHttpClient("ApiHttpClient", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7078/");
+    client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? "https://localhost:7078/");
 })
 .AddHttpMessageHandler<JwtInterceptorHandler>();
 
