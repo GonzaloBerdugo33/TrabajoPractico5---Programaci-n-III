@@ -1,4 +1,5 @@
-﻿@page "/Productos-grid"
+﻿@page "/"
+@page "/Productos-grid"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using MiApiTP.Web.DTOs
@@ -56,7 +57,7 @@ else
             <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Foto" Context="prod">
                 @if (!string.IsNullOrEmpty(prod.ImagenUrl))
                 {
-                    <img src="@prod.ImagenUrl"
+                    <img src="@UrlImagen(prod.ImagenUrl)"
                          alt="@prod.Nombre"
                          style="width: 45px; height: 45px; object-fit: contain;"
                          class="rounded border bg-white p-1" />
@@ -77,9 +78,9 @@ else
                 <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.ProveedorNombre)" Title="Proveedor" Sortable="true" />
             }
 
-            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Precio)" Title="Precio ($)" Format="C2" Sortable="true" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Right" />
+            <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Precio)" Title="Precio ($)" Format="N2" Sortable="true" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Right" />
             <Microsoft.AspNetCore.Components.QuickGrid.PropertyColumn Property="@(p => p.Stock)" Title="Stock" Sortable="true" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Right" />
-
+            
             <Microsoft.AspNetCore.Components.QuickGrid.TemplateColumn TGridItem="ProductoDTO" Title="Estado" Context="prod" Align="Microsoft.AspNetCore.Components.QuickGrid.Align.Center">
                 @if (prod.Stock == 0)
                 {
@@ -138,7 +139,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // ¿Quien está mirando la página es administrador?
         var estado = await AuthStateProvider.GetAuthenticationStateAsync();
         esAdmin = estado.User.IsInRole("Administrador");
 
@@ -149,7 +149,6 @@ else
     {
         try
         {
-            // tamanoPagina grande: la API pagina de a 10 por defecto y el catálogo debe traer todos
             var lista = await Http.GetFromJsonAsync<List<ProductoDTO>>("api/Producto?pagina=1&tamanoPagina=1000");
             productosQueryable = (lista ?? new()).AsQueryable();
         }
@@ -157,6 +156,11 @@ else
         {
             Snackbar.Add($"Error al cargar el catálogo: {ex.Message}", Severity.Error);
         }
+    }
+
+    private string UrlImagen(string ruta)
+    {
+        return $"{Http.BaseAddress}{ruta.TrimStart('/')}";
     }
 
     private void ActualizarProducto(ProductoDTO prod)
