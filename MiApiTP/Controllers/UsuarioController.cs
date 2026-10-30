@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
-using System.Security.Claims
+using System.Security.Claims;
 using MiApiTP.Modelos;
 using MiApiTP.Servicios;
 using MiApiTP.DTOs;
