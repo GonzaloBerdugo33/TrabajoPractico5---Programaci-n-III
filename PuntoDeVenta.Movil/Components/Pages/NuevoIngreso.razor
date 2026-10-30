@@ -1,0 +1,167 @@
+﻿@page "/ingresos/nuevo"
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using PuntoDeVenta.Movil.DTOs
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h5" Class="mb-3">Nuevo ingreso de mercadería</MudText>
+
+<MudSelect T="int" Label="Proveedor" @bind-Value="ingreso.ProveedorId" Variant="Variant.Outlined" Class="mb-3">
+    @foreach (var prov in proveedores)
+    {
+        <MudSelectItem Value="@prov.Id">@prov.RazonSocial</MudSelectItem>
+    }
+</MudSelect>
+
+<MudPaper Class="pa-3 mb-3">
+    <MudText Typo="Typo.subtitle1" Class="mb-2"><b>Agregar producto</b></MudText>
+
+    <MudSelect T="int" Label="Producto" @bind-Value="productoSeleccionadoId" Variant="Variant.Outlined" Class="mb-2">
+        @foreach (var prod in productos)
+        {
+            <MudSelectItem Value="@prod.Id">@prod.Nombre (stock: @prod.Stock)</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudNumericField T="int" Label="Cantidad" @bind-Value="cantidadSeleccionada" Min="1" Variant="Variant.Outlined" Class="mb-2" />
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="AgregarDetalle">
+        Agregar al ingreso
+    </MudButton>
+</MudPaper>
+
+@if (ingreso.Detalles.Count == 0)
+{
+    <MudText Class="mb-3">Todavía no agregaste productos a este ingreso.</MudText>
+}
+else
+{
+    @foreach (var d in ingreso.Detalles)
+    {
+        <MudPaper Class="pa-3 mb-2 d-flex justify-space-between align-center">
+            <div>
+                <b>@NombreProducto(d.ProductoId)</b><br />
+                <MudText Typo="Typo.caption">Cantidad: @d.Cantidad</MudText>
+            </div>
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="() => Quitar(d)" />
+        </MudPaper>
+    }
+
+    <MudText Class="mb-3" Align="Align.Right"><b>Total de unidades: @TotalUnidades</b></MudText>
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Success" Size="Size.Large" FullWidth="true"
+           Disabled="@guardando" OnClick="Guardar">
+    @(guardando ? "Guardando..." : "Registrar ingreso")
+</MudButton>
+
+@code {
+    private CrearIngresoDTO ingreso = new();
+    private List<ProveedorSelectDTO> proveedores = new();
+    private List<ProductoSelectDTO> productos = new();
+
+    private int productoSeleccionadoId;
+    private int cantidadSeleccionada = 1;
+    private bool guardando;
+
+    private int TotalUnidades => ingreso.Detalles.Sum(d => d.Cantidad);
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor/Todos") ?? new();
+            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto/Todos") ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar proveedores y productos: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private string NombreProducto(int productoId)
+    {
+        var producto = productos.FirstOrDefault(p => p.Id == productoId);
+        return producto?.Nombre ?? "Desconocido";
+    }
+
+    private void AgregarDetalle()
+    {
+        if (productoSeleccionadoId == 0)
+        {
+            Snackbar.Add("Elegí un producto.", Severity.Warning);
+            return;
+        }
+
+        if (cantidadSeleccionada <= 0)
+        {
+            Snackbar.Add("La cantidad debe ser mayor a cero.", Severity.Warning);
+            return;
+        }
+
+        var existente = ingreso.Detalles.FirstOrDefault(d => d.ProductoId == productoSeleccionadoId);
+        if (existente != null)
+        {
+            existente.Cantidad += cantidadSeleccionada;
+        }
+        else
+        {
+            ingreso.Detalles.Add(new CrearIngresoDetalleDTO
+            {
+                ProductoId = productoSeleccionadoId,
+                Cantidad = cantidadSeleccionada
+            });
+        }
+
+        productoSeleccionadoId = 0;
+        cantidadSeleccionada = 1;
+    }
+
+    private void Quitar(CrearIngresoDetalleDTO detalle)
+    {
+        ingreso.Detalles.Remove(detalle);
+    }
+
+    private async Task Guardar()
+    {
+        if (ingreso.ProveedorId == 0)
+        {
+            Snackbar.Add("Elegí un proveedor.", Severity.Warning);
+            return;
+        }
+
+        if (ingreso.Detalles.Count == 0)
+        {
+            Snackbar.Add("El ingreso necesita al menos un producto.", Severity.Warning);
+            return;
+        }
+
+        guardando = true;
+        try
+        {
+            var respuesta = await Http.PostAsJsonAsync("api/Ingreso", ingreso);
+
+            if (respuesta.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Ingreso registrado y stock actualizado.", Severity.Success);
+                Nav.NavigateTo("/ingresos");
+            }
+            else
+            {
+                var detalle = await respuesta.Content.ReadAsStringAsync();
+                Snackbar.Add($"No se pudo registrar: {detalle}", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error de conexión: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            guardando = false;
+        }
+    }
+}

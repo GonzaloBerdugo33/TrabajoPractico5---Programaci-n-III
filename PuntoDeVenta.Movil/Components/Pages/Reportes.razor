@@ -1,0 +1,63 @@
+﻿@page "/reportes"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Maui.ApplicationModel
+@using Microsoft.Maui.Storage
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h5" Class="mb-3">Reportes PDF</MudText>
+
+@foreach (var r in _reportes)
+{
+    <MudPaper Class="pa-3 mb-3">
+        <MudText Typo="Typo.subtitle1"><b>@r.Titulo</b></MudText>
+        <MudText Typo="Typo.body2" Class="mb-3">@r.Descripcion</MudText>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.PictureAsPdf"
+                   Disabled="@(trabajando != null)"
+                   OnClick="() => Ver(r)">
+            @(trabajando == r.Clave ? "Generando..." : "Ver reporte")
+        </MudButton>
+    </MudPaper>
+}
+
+@code {
+    private record Reporte(string Clave, string Titulo, string Descripcion);
+
+    private readonly List<Reporte> _reportes = new()
+    {
+        new("stock", "Stock actual", "Todos los productos con su precio, stock y estado."),
+        new("entradas", "Entradas de mercadería", "Ingresos registrados con proveedor, responsable y unidades."),
+        new("salidas", "Salidas (ventas)", "Ventas con cliente, método de pago y total.")
+    };
+
+    // Qué reporte se está generando (null = ninguno). Evita clics dobles.
+    private string? trabajando;
+
+    private async Task Ver(Reporte r)
+    {
+        trabajando = r.Clave;
+        try
+        {
+            // Http ya manda el token, por eso la API deja pasar al administrador
+            var bytes = await Http.GetByteArrayAsync($"api/Reporte/{r.Clave}");
+
+            // Se guarda el PDF en la carpeta temporal del teléfono
+            var ruta = Path.Combine(FileSystem.CacheDirectory, $"reporte-{r.Clave}.pdf");
+            await File.WriteAllBytesAsync(ruta, bytes);
+
+            // Se abre con el visor de PDF del teléfono
+            await Launcher.Default.OpenAsync(new OpenFileRequest(r.Titulo, new ReadOnlyFile(ruta)));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"No se pudo generar el reporte: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            trabajando = null;
+        }
+    }
+}

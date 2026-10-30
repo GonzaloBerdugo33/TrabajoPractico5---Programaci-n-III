@@ -1,0 +1,63 @@
+﻿@page "/ingresos"
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using PuntoDeVenta.Movil.DTOs
+@using PuntoDeVenta.Movil.Servicios
+@attribute [Authorize(Roles = "Administrador")]
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h5" Class="mb-3">Ingresos de mercadería</MudText>
+
+<MudButton Href="/ingresos/nuevo" Variant="Variant.Filled" Color="Color.Primary"
+           StartIcon="@Icons.Material.Filled.Add" FullWidth="true" Class="mb-3">
+    Nuevo ingreso
+</MudButton>
+
+@if (cargando)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else if (ingresos.Count == 0)
+{
+    <MudText>Todavía no hay ingresos registrados.</MudText>
+}
+else
+{
+    @foreach (var i in ingresos)
+    {
+        <MudPaper Class="pa-3 mb-3">
+            <div class="d-flex justify-space-between">
+                <b>Ingreso N° @i.Id</b>
+                <MudText Typo="Typo.caption">@Formato.Fecha(i.Fecha)</MudText>
+            </div>
+            <MudDivider Class="my-2" />
+            <div>Proveedor: @i.ProveedorRazonSocial</div>
+            <div>Registrado por: @i.UsuarioEmail</div>
+            <div><b>Total de unidades: @i.TotalItems</b></div>
+        </MudPaper>
+    }
+}
+
+@code {
+    private List<ListarIngresoDTO> ingresos = new();
+    private bool cargando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var lista = await Http.GetFromJsonAsync<List<ListarIngresoDTO>>("api/Ingreso") ?? new();
+
+            ingresos = lista.OrderByDescending(i => i.Id).ToList();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error al cargar los ingresos: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+}
