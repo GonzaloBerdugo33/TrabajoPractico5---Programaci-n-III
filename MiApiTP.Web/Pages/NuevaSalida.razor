@@ -1,7 +1,7 @@
 ﻿@page "/Salida/Nuevo"
 @using Microsoft.AspNetCore.Authorization
 @using MiApiTP.Web.DTOs
-@attribute [Authorize(Roles = "Administrador")]
+@attribute [Authorize(Roles = "Administrador,Cajero")]
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
@@ -178,7 +178,6 @@
         var existente = salidaDto.Detalles.FirstOrDefault(d => d.ProductoId == prod.Id);
         var cantidadTotal = (existente?.Cantidad ?? 0) + cantidadSeleccionada;
 
-        // Para no vender más de lo que hay (la API también lo valida)
         if (cantidadTotal > prod.Stock)
         {
             Snackbar.Add($"Solo quedan {prod.Stock} unidades de {prod.Nombre}.", Severity.Warning);
@@ -234,13 +233,10 @@
                 return;
             }
 
-            // 1) La API devuelve el Id de la venta recién creada
             var creada = await response.Content.ReadFromJsonAsync<SalidaCreada>();
 
-            // 2) Con ese Id pedimos el detalle completo (cliente, usuario, productos con precio)
             var salida = await Http.GetFromJsonAsync<SalidaDTO>($"api/Salida/{creada!.Id}");
 
-            // 3) Mostramos el ticket y esperamos a que el cajero lo cierre
             if (salida != null)
             {
                 var dialogo = await Dialogs.ShowAsync<TicketDialog>("Venta registrada",

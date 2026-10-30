@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using System.Security.Claims
 using MiApiTP.Modelos;
 using MiApiTP.Servicios;
 using MiApiTP.DTOs;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace MiApiTP.Controllers
 {
@@ -76,7 +77,7 @@ namespace MiApiTP.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Registrar(CrearUsuarioDTO dto)
         {
-            try
+            /*try
             {
                 var resultado = await _service.RegistrarAsync(dto);
                 return Ok(resultado);
@@ -84,7 +85,16 @@ namespace MiApiTP.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(ex.Message);
-            }
+            }*/
+            var resultado = await _service.RegistrarAsync(dto);
+
+            var adminId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var adminEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? "";
+
+            await _auditoria.Registrar("RegistroUsuario", "Usuario", resultado.Id,
+                $"Alta de usuario {resultado.Email} con rol {resultado.Rol}", adminId, adminEmail);
+
+            return Ok(resultado);
         }
 
         [HttpPut("{id}")]

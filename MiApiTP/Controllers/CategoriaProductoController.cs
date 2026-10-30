@@ -3,11 +3,13 @@ using MiApiTP.Servicios;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace MiApiTP.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class CategoriaProductoController : ControllerBase
     {
         private readonly CategoriaProductoService _service;
@@ -25,6 +27,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerPorId(int id) 
         {
             var categoria = await _service.ObtenerPorId(id);

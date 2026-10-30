@@ -99,9 +99,15 @@
                     </MudNavGroup>
 
                     <MudNavGroup Title="Administración" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="false">
-                        <MudNavLink Href="/Register" Icon="@Icons.Material.Filled.PersonAdd">
-                            Crear Usuario
-                        </MudNavLink>
+
+                        <MudNavGroup Title="Gestión Usuarios" Icon="@Icons.Material.Filled.People" Expanded="false">
+                            <MudNavLink Href="/Usuarios" Icon="@Icons.Material.Filled.People">
+                                Gestion Usuarios
+                            </MudNavLink>
+                            <MudNavLink Href="/Register" Icon="@Icons.Material.Filled.PersonAdd">
+                                Crear Usuario
+                            </MudNavLink>
+                        </MudNavGroup>
 
                         <MudNavGroup Title="Gestión Proveedores" Icon="@Icons.Material.Filled.People" Expanded="false">
                             <MudNavLink Href="/Proveedores" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People">
@@ -131,6 +137,18 @@
                     </MudNavGroup>
                 </Authorized>
             </AuthorizeView>
+
+            <!-- Menú exclusivo para Cajeros -->
+            <AuthorizeView Roles = "Cajero">
+                <Authorized>
+                      <MudNavLink Href="/Salida" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ListAlt">
+                               Historial de Ventas
+                      </MudNavLink>
+                      <MudNavLink Href="/Salida/Nuevo" Icon="@Icons.Material.Filled.AddCircleOutline">
+                               Nueva Venta
+                      </MudNavLink>
+                  </Authorized>
+             </AuthorizeView>
 
             <MudNavLink Href="/acerca-de" Icon="@Icons.Material.Filled.Info">
                 Acerca de

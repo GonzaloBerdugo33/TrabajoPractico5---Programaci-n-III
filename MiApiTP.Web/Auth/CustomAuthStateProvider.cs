@@ -39,7 +39,8 @@ namespace MiApiTP.Web.Auth
                 }
             }
 
-            var identity = new ClaimsIdentity(claims, "jwt");
+            var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt", ClaimTypes.Name, ClaimTypes.Role);
+            var authenticatedUser = new ClaimsPrincipal(identity);
             _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             return new AuthenticationState(new ClaimsPrincipal(identity));
@@ -47,8 +48,19 @@ namespace MiApiTP.Web.Auth
 
         public void NotifyUserAuthentication(string token)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
+            var identity = new ClaimsIdentity(
+                ParseClaimsFromJwt(token),
+                "jwt",
+                ClaimTypes.Name,
+                ClaimTypes.Role
+            );
+
+            var authenticatedUser = new ClaimsPrincipal(identity);
+
+            var authState = Task.FromResult(
+                new AuthenticationState(authenticatedUser)
+            );
+
             NotifyAuthenticationStateChanged(authState);
         }
 

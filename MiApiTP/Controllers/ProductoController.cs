@@ -40,7 +40,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("Todos")]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> ObtenerTodosParaSelect()
         {
             var productos = await _service.ObtenerTodos();
@@ -57,6 +57,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             var producto = await _service.ObtenerPorId(id);
@@ -91,6 +92,7 @@ namespace MiApiTP.Controllers
                 CategoriaId = dto.CategoriaId,
                 ProveedorId = dto.ProveedorId,
             };
+           
             await _service.CrearProducto(producto);
 
             var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

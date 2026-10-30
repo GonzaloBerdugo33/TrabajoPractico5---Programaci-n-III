@@ -76,8 +76,7 @@ else
     private List<ProductoDTO>? productos;
     private string filtro = string.Empty;
     private string? error;
-
-    // Si no hay texto de búsqueda devuelve todos; si hay, los que coinciden en nombre o categoría
+    
     private List<ProductoDTO> ProductosFiltrados
     {
         get
@@ -95,7 +94,6 @@ else
     {
         try
         {
-            // tamanoPagina grande: la API pagina de a 10 por defecto y el catálogo debe traer todos
             productos = await Http.GetFromJsonAsync<List<ProductoDTO>>("api/Producto?pagina=1&tamanoPagina=1000");
         }
         catch (Exception ex)
@@ -111,7 +109,6 @@ else
 
         if (estado.User.Identity?.IsAuthenticated != true)
         {
-            // Cuadro de diálogo: true = Iniciar sesión, false = Crear cuenta, null = Seguir mirando
             var respuesta = await Dialogs.ShowMessageBoxAsync(
                 "Necesitás una cuenta",
                 "Para agregar productos al carrito tenés que iniciar sesión o crear una cuenta.",

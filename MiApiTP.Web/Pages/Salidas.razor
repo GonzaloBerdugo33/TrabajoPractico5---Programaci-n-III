@@ -1,7 +1,7 @@
 ﻿@page "/Salida"
 @using Microsoft.AspNetCore.Authorization
 @using MiApiTP.Web.DTOs
-@attribute [Authorize(Roles = "Administrador")]
+@attribute [Authorize(Roles = "Administrador,Cajero")]
 @inject HttpClient Http
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar

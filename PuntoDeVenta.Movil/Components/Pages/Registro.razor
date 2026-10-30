@@ -41,7 +41,6 @@ else
     {
         error = null;
 
-        // Validaciones antes de llamar a la API (la API vuelve a validar)
         if (string.IsNullOrWhiteSpace(datos.Nombre)) { error = "El nombre es obligatorio."; return; }
         if (string.IsNullOrWhiteSpace(datos.Email)) { error = "El email es obligatorio."; return; }
         if (string.IsNullOrWhiteSpace(datos.Password) || datos.Password.Length < 6)

@@ -8,7 +8,6 @@ using System.Security.Claims;
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     public class SalidaController : ControllerBase
     {
@@ -22,6 +21,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador,Cajero") ]
         public async Task<IActionResult> ObtenerTodos()
         {
             var salidas = await _service.ListarSalidaAsync();
@@ -29,6 +29,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             var dto = await _service.ObtenerDetalleAsync(id);
@@ -37,6 +38,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> Crear(CrearSalidaDTO dto)
         {
             try

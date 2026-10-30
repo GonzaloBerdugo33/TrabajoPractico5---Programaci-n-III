@@ -46,7 +46,6 @@
 
     private async Task HandleLogin()
     {
-        // Guarda: no se llama a la API con campos vacíos
         if (string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
         {
             Snackbar.Add("Completá el correo y la contraseña.", Severity.Warning);
@@ -64,15 +63,12 @@
 
                 if (result != null && !string.IsNullOrEmpty(result.Token))
                 {
-                    // 1. Guardar el token
                     await SecureStorage.Default.SetAsync("authToken", result.Token);
 
-                    // 2. Avisar al AuthStateProvider que el usuario inició sesión
                     ((CustomAuthStateProvider)AuthStateProvider).NotifyUserAuthentication(result.Token);
 
                     Snackbar.Add("¡Bienvenido!", Severity.Success);
 
-                    // 3. Volver al catálogo
                     Navigation.NavigateTo("/");
                 }
             }

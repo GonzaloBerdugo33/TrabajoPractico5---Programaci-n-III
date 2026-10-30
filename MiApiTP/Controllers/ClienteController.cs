@@ -8,8 +8,8 @@ using System.Linq.Expressions;
 namespace MiApiTP.Controllers
 {
     [ApiController]
-    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
+    [Authorize]
     public class ClienteController : ControllerBase
     {
         private readonly ClienteService _service;
@@ -20,6 +20,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerPaginado(int pagina = 1, int tamanoPagina = 10)
         {
             var clientes = await _service.ObtenerPaginado(pagina, tamanoPagina);
@@ -27,6 +28,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             var cliente = await _service.ObtenerPorId(id);
@@ -35,6 +37,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("Todos")]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> ObtenerTodosParaSelect()
         {
             var cliente = await _service.ObtenerTodos();
@@ -49,6 +52,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet("ListarTodos")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ObtenerTodosParaGrid()
         {
             var clientes = await _service.ObtenerTodos();
@@ -56,6 +60,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Crear(Cliente cliente)
         {
             await _service.CrearCliente(cliente);
@@ -63,6 +68,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Actualizar(int id, Cliente cliente)
         {
             if (id != cliente.Id) return BadRequest();
@@ -71,6 +77,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Eliminar(int id)
         {
             try

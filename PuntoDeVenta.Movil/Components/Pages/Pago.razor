@@ -91,11 +91,8 @@ else
         procesando = true;
         try
         {
-            // Pago simulado: una pausa para que parezca que se procesa
             await Task.Delay(1500);
 
-            // De cada renglón del carrito sacamos solo ProductoId y Cantidad.
-            // (Con foreach: recorrer Items y agregar un CrearSalidaDetalleDTO a una lista nueva.)
             var compra = new CrearCompraDTO
             {
                 MetodoPago = metodoPago,
