@@ -53,6 +53,13 @@ namespace MiApiTP.Data
                 .WithMany()
                 .HasForeignKey(d => d.ProductoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación Cliente -> Usuario
+            modelBuilder.Entity<Cliente>()
+                .HasOne(c => c.Usuario)
+                .WithOne()
+                .HasForeignKey<Cliente>(c => c.UsuarioId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

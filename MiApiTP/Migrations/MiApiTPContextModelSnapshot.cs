@@ -97,6 +97,9 @@ namespace MiApiTP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Direccion")
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -109,7 +112,13 @@ namespace MiApiTP.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("UsuarioId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
 
                     b.ToTable("Clientes");
                 });
@@ -333,6 +342,16 @@ namespace MiApiTP.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("MiApiTP.Modelos.Cliente", b =>
+                {
+                    b.HasOne("MiApiTP.Modelos.Usuario", "Usuario")
+                        .WithOne()
+                        .HasForeignKey("MiApiTP.Modelos.Cliente", "UsuarioId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("MiApiTP.Modelos.IngresoDetalle", b =>
