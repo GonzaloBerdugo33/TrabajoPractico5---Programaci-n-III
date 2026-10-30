@@ -1,0 +1,68 @@
+﻿@page "/mis-compras"
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using PuntoDeVenta.Movil.DTOs
+@using PuntoDeVenta.Movil.Servicios
+@attribute [Authorize(Roles = "Cliente")]
+@inject HttpClient Http
+
+<MudText Typo="Typo.h5" Class="mb-3">Mis compras</MudText>
+
+@if (error is not null)
+{
+    <MudAlert Severity="Severity.Error">@error</MudAlert>
+}
+else if (compras is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else if (compras.Count == 0)
+{
+    <MudText Class="mb-3">Todavía no hiciste ninguna compra.</MudText>
+    <MudButton Href="/catalogo" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true">Ir al catálogo</MudButton>
+}
+else
+{
+    @foreach (var c in compras)
+    {
+        <MudPaper Class="pa-3 mb-3">
+            <div class="d-flex justify-space-between">
+                <b>Compra N° @c.Id</b>
+                <MudText Typo="Typo.caption">@Formato.Fecha(c.Fecha)</MudText>
+            </div>
+            <MudDivider Class="my-2" />
+
+            @foreach (var d in c.DetallesProductos)
+            {
+                <div class="d-flex justify-space-between mb-1">
+                    <span>@d.Cantidad × @d.NombreProducto</span>
+                    <span>@Formato.Dinero(d.Subtotal)</span>
+                </div>
+            }
+
+            <MudDivider Class="my-2" />
+            <div class="d-flex justify-space-between">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Pago: @c.MetodoPago</MudText>
+                @* Total = suma de los subtotales de cada renglón *@
+                <b>@Formato.Dinero(c.DetallesProductos.Sum(d => d.Subtotal))</b>
+            </div>
+        </MudPaper>
+    }
+}
+
+@code {
+    private List<SalidaDTO>? compras;
+    private string? error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            compras = await Http.GetFromJsonAsync<List<SalidaDTO>>("api/Tienda/mis-compras");
+        }
+        catch (Exception ex)
+        {
+            error = $"No se pudieron cargar tus compras: {ex.Message}";
+        }
+    }
+}
