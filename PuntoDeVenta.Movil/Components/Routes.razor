@@ -1,0 +1,23 @@
+﻿@* Enrutador de la app. AuthorizeRouteView hace que funcionen los [Authorize(Roles = ...)] de las páginas. *@
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(MauiProgram).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <MudAlert Severity="Severity.Warning" Class="ma-3">
+                        Necesitás iniciar sesión con una cuenta autorizada para ver esta pantalla.
+                    </MudAlert>
+                    <MudButton Href="/Login" Variant="Variant.Filled" Color="Color.Primary" Class="ma-3">
+                        Iniciar sesión
+                    </MudButton>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(Layout.MainLayout)">
+                <MudText Class="ma-3">No se encontró la pantalla.</MudText>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

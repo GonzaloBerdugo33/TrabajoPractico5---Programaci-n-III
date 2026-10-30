@@ -1,0 +1,100 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@using PuntoDeVenta.Movil.Servicios.Interfaces
+@inject PuntoDeVenta.Movil.Servicios.CarritoService CarritoServicio
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+
+<MudThemeProvider Theme="_tema" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="2" Color="Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="AbrirCerrarMenu" />
+        <MudText Typo="Typo.h6" Class="ml-2">Punto de Venta</MudText>
+    </MudAppBar>
+
+    @* Menú lateral que se desliza desde la izquierda *@
+    <MudDrawer @bind-Open="_menuAbierto" Elevation="3" Variant="DrawerVariant.Temporary">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.subtitle1" Color="Color.Primary"><b>Menú</b></MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Storefront">Catálogo</MudNavLink>
+
+            @* Sin sesión iniciada *@
+            <AuthorizeView>
+                <NotAuthorized>
+                    <MudNavLink Href="/Login" Icon="@Icons.Material.Filled.Login">Iniciar sesión</MudNavLink>
+                    <MudNavLink Href="/registro" Icon="@Icons.Material.Filled.PersonAdd">Crear cuenta</MudNavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+
+            @* Solo clientes *@
+            <AuthorizeView Roles="Cliente">
+                <MudNavLink Href="/carrito" Icon="@Icons.Material.Filled.ShoppingCart">Carrito</MudNavLink>
+                <MudNavLink Href="/mis-compras" Icon="@Icons.Material.Filled.ReceiptLong">Mis compras</MudNavLink>
+            </AuthorizeView>
+
+            @* Solo administradores: acá se agregan las pantallas de ingreso, ventas y reportes cuando estén armadas *@
+             <AuthorizeView Roles="Administrador">
+                <MudNavLink Href="/ingresos" Icon="@Icons.Material.Filled.Inventory">Ingresos</MudNavLink>
+                <MudNavLink Href="/reportes" Icon="@Icons.Material.Filled.PictureAsPdf">Reportes</MudNavLink>
+            </AuthorizeView>
+
+            @* Cualquier usuario con sesión *@
+            <AuthorizeView>
+                <Authorized>
+                    <MudNavLink OnClick="CerrarSesion" Icon="@Icons.Material.Filled.Logout">Cerrar sesión</MudNavLink>
+                </Authorized>
+            </AuthorizeView>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Class="pa-3">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _menuAbierto;
+
+    // Mismos colores que la Web
+    private readonly MudTheme _tema = new()
+    {
+        PaletteLight = new PaletteLight
+        {
+            Primary = "#0284c7",
+            Secondary = "#0f172a",
+            AppbarBackground = "#0f172a"
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        // Cada vez que cambia de pantalla, se cierra el menú
+        Nav.LocationChanged += AlCambiarDePantalla;
+    }
+
+    private void AlCambiarDePantalla(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        _menuAbierto = false;
+        StateHasChanged();
+    }
+
+    private void AbrirCerrarMenu() => _menuAbierto = !_menuAbierto;
+
+    private async Task CerrarSesion()
+    {
+        CarritoServicio.Vaciar();
+        await AuthService.LogoutAsync();
+        Nav.NavigateTo("/", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= AlCambiarDePantalla;
+    }
+}
