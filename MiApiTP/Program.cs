@@ -73,6 +73,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<AuditoriaService>();
 builder.Services.AddScoped<IReporteService, ReporteService>();
+builder.Services.AddScoped<TiendaService>();
 
 builder.Services.AddAuthentication(options =>
 {
