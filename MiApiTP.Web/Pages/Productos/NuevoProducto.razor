@@ -49,7 +49,6 @@
 
 @code {
     private const long MaxImagen = 2 * 1024 * 1024;
-
     private CrearProductoDTO productoDto = new();
     private List<CategoriaProductoDTO>? categorias;
     private List<ProveedorSelectDTO>? proveedores;
@@ -63,7 +62,7 @@
         try
         {
             categorias = await Http.GetFromJsonAsync<List<CategoriaProductoDTO>>("api/CategoriaProducto");
-            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor/Todos");
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor?pagina=1&tamanoPagina=1000");
         }
         catch (Exception ex)
         {

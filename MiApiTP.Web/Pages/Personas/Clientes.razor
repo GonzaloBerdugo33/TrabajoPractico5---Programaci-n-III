@@ -78,7 +78,7 @@ else
     {
         try
         {
-            var lista = await Http.GetFromJsonAsync<List<ListarClienteDTO>>("api/Cliente/ListarTodos");
+            var lista = await Http.GetFromJsonAsync<List<ListarClienteDTO>>("api/Cliente?pagina=1&tamanoPagina=1000");
             if (lista != null)
             {
                 clientesQueryable = lista.AsQueryable();

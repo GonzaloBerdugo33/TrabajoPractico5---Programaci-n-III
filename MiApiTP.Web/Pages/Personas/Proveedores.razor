@@ -82,7 +82,7 @@ else
     {
         try
         {
-            var lista = await Http.GetFromJsonAsync<List<ListarProveedorDTO>>("api/Proveedor/ListarTodos");
+            var lista = await Http.GetFromJsonAsync<List<ListarProveedorDTO>>("api/Proveedor?pagina=1&tamanoPagina=1000");
             if (lista != null)
             {
                 proveedoresQueryable = lista.AsQueryable();

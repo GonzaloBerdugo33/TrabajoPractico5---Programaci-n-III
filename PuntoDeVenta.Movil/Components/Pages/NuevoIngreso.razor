@@ -73,8 +73,8 @@ else
     {
         try
         {
-            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor/Todos") ?? new();
-            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto/Todos") ?? new();
+            proveedores = await Http.GetFromJsonAsync<List<ProveedorSelectDTO>>("api/Proveedor?pagina=1&tamanoPagina=1000") ?? new();
+            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto?pagina=1&tamanoPagina=1000") ?? new();
         }
         catch (Exception ex)
         {

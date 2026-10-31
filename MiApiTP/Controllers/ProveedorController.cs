@@ -34,27 +34,6 @@ namespace MiApiTP.Controllers
             return Ok(proveedor);
         }
 
-        [HttpGet("Todos")]
-        public async Task<IActionResult> ObtenerTodosParaSelect()
-        {
-            var proveedor = await _service.ObtenerTodos();
-
-            var dto = proveedor.Select(p => new ProveedorSelectDTO
-            {
-                Id = p.Id,
-                RazonSocial = p.RazonSocial
-            }).ToList();
-
-            return Ok(dto);
-        }
-
-        [HttpGet("ListarTodos")]
-        public async Task<IActionResult> ObtenerTodosParaGrid()
-        {
-            var proveedores = await _service.ObtenerTodos();
-            return Ok(proveedores);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Crear(Proveedor proveedor) 
         {

@@ -108,7 +108,6 @@
     private int cantidadSeleccionada = 1;
     private bool guardando = false;
 
-    // Lo que devuelve la API al crear la venta: { "id": 12 }
     private record SalidaCreada(int Id);
 
     // Total de la venta: suma de precio x cantidad de cada línea
@@ -123,8 +122,8 @@
     {
         try
         {
-            clientes = await Http.GetFromJsonAsync<List<ClienteSelectDTO>>("api/Cliente/Todos");
-            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto/Todos");
+            clientes = await Http.GetFromJsonAsync<List<ClienteSelectDTO>>("api/Cliente?pagina=1&tamanoPagina=1000");
+            productos = await Http.GetFromJsonAsync<List<ProductoSelectDTO>>("api/Producto?pagina=1&tamanoPagina=1000");
         }
         catch (Exception ex)
         {

@@ -20,7 +20,7 @@ namespace MiApiTP.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Administrador")]
+        [Authorize(Roles = "Administrador,Cajero")]
         public async Task<IActionResult> ObtenerPaginado(int pagina = 1, int tamanoPagina = 10)
         {
             var clientes = await _service.ObtenerPaginado(pagina, tamanoPagina);
@@ -34,29 +34,6 @@ namespace MiApiTP.Controllers
             var cliente = await _service.ObtenerPorId(id);
             if (cliente == null) return NotFound();
             return Ok(cliente);
-        }
-
-        [HttpGet("Todos")]
-        [Authorize(Roles = "Administrador,Cajero")]
-        public async Task<IActionResult> ObtenerTodosParaSelect()
-        {
-            var cliente = await _service.ObtenerTodos();
-
-            var dto = cliente.Select(c => new ClienteSelectDTO
-            {
-                Id = c.Id,
-                Nombre = c.Nombre,
-            }).ToList();
-
-            return Ok(dto);
-        }
-
-        [HttpGet("ListarTodos")]
-        [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> ObtenerTodosParaGrid()
-        {
-            var clientes = await _service.ObtenerTodos();
-            return Ok(clientes);
         }
 
         [HttpPost]

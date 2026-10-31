@@ -48,10 +48,23 @@
                               InputType="InputType.Password"
                               Required="true" />
 
-                <MudSelect T="string" @bind-Value="dto.Rol" Label="Rol" Variant="Variant.Outlined" Class="mb-4">
-                    <MudSelectItem T="string" Value="@("Administrador")">Administrador</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("Cajero")">Cajero</MudSelectItem>
-                </MudSelect>
+               <MudSelect T="string"
+                           @bind-Value="dto.Rol"
+                           Label="Rol"
+                           Placeholder="Seleccione un rol"
+                           Variant="Variant.Outlined"
+                           Class="mb-4"
+                           Required="true">
+
+                     <MudSelectItem T="string" Value="@("Administrador")">
+                              Administrador
+                    </MudSelectItem>
+
+                    <MudSelectItem T="string" Value="@("Cajero")">
+                              Cajero
+                    </MudSelectItem>
+
+               </MudSelect>
 
                 <MudButton ButtonType="ButtonType.Submit"
                            Variant="Variant.Filled"
@@ -82,7 +95,7 @@
         Nombre = string.Empty,
         Email = string.Empty,
         Password = string.Empty,
-        Rol = "Administrador"
+        Rol = string.Empty
     };
 
     private string? mensajeError;
@@ -100,12 +113,21 @@
             if (response.IsSuccessStatusCode)
             {
                 Snackbar.Add("Usuario creado con éxito", Severity.Success);
-                dto = new() { Rol = "Administrador" };
+
+                dto = new()
+                {
+                    Nombre = string.Empty,
+                    Email = string.Empty,
+                    Password = string.Empty,
+                    Rol = string.Empty
+                };
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                mensajeError = string.IsNullOrEmpty(errorContent) ? "Ocurrió un error al registrar el usuario." : errorContent;
+                mensajeError = string.IsNullOrEmpty(errorContent)
+                    ? "Ocurrió un error al registrar el usuario."
+                    : errorContent;
             }
         }
         catch (Exception)

@@ -77,15 +77,7 @@ namespace MiApiTP.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Registrar(CrearUsuarioDTO dto)
         {
-            /*try
-            {
-                var resultado = await _service.RegistrarAsync(dto);
-                return Ok(resultado);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }*/
+
             var resultado = await _service.RegistrarAsync(dto);
 
             var adminId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
