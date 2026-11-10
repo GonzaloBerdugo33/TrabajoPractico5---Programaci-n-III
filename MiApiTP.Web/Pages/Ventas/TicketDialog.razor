@@ -49,18 +49,14 @@
 </MudDialog>
 
 @code {
-    // MudBlazor nos da esta referencia para poder cerrar el diálogo
     [CascadingParameter] IMudDialogInstance MudDialog { get; set; } = default!;
 
-    // La venta que se muestra; quien abre el diálogo se la pasa
     [Parameter] public SalidaDTO Salida { get; set; } = default!;
 
-    // Total = suma de (cantidad x precio unitario) de cada línea
     private decimal Total => Salida.DetallesProductos.Sum(d => d.Cantidad * d.PrecioUnitario);
 
     private static string Dinero(decimal valor) => $"$ {valor:N2}";
 
-    // Llama a window.print() del navegador (JavaScript)
     private async Task Imprimir() => await JS.InvokeVoidAsync("window.print");
 
     private void Cerrar() => MudDialog.Close();

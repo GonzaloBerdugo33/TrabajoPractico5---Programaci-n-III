@@ -104,7 +104,6 @@ else
 
     private async Task Agregar(ProductoDTO producto)
     {
-        // ¿Hay alguien con sesión iniciada?
         var estado = await AuthStateProvider.GetAuthenticationStateAsync();
 
         if (estado.User.Identity?.IsAuthenticated != true)
@@ -119,7 +118,6 @@ else
             return;
         }
 
-        // Solo los clientes compran; el administrador gestiona desde su menú
         if (!estado.User.IsInRole("Cliente"))
         {
             Snackbar.Add("Solo los clientes pueden comprar. Entrá con una cuenta de cliente.", Severity.Warning);
